@@ -1,0 +1,8 @@
+venv/
+news_crawler/News_Category_Dataset_v2.json
+news_crawler/uci-news-aggregator.csv
+__pycache__/
+.idea/
+AggregatorApp/__pycache__/
+News_Aggregator/__pycache__/
+news_crawler/news_crawler/__pycache/
