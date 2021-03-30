@@ -5,7 +5,7 @@
 
 import scrapy
 from scrapy_djangoitem import DjangoItem
-from AggregatorApp.models import News
+from AggregatorApp.models import RawNews
 
 
 class ApNewsItem(scrapy.Item):
@@ -29,7 +29,7 @@ class ApNewsItem2(scrapy.Item):
 
 
 class NewsItem(DjangoItem):
-    django_model = News
+    django_model = RawNews
 
 
 class GuardianItem(scrapy.Item):

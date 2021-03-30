@@ -6,3 +6,4 @@ __pycache__/
 AggregatorApp/__pycache__/
 News_Aggregator/__pycache__/
 news_crawler/news_crawler/__pycache/
+db.sqlite3

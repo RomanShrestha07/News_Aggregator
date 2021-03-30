@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 # from .forms import UserRegistrationForm
-from .models import News, Profile
+from .models import RawNews, Profile, News
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import UserForm, ProfileForm
@@ -52,3 +52,32 @@ class NewsDetail(DetailView):
     model = News
     template_name = 'AggregatorApp/test-detail.html'
 
+
+def news_detail(request):
+    news = RawNews.objects.all()
+    c = 0
+
+    for n in news:
+        c = c + 1
+        source = n.source
+        date_time = n.date_time
+        news_id = ''
+
+        if source == 'AP News':
+            news_id = "AP-News-" + str(c)
+
+        date = date_time[0:10]
+
+        news2 = News(source=source, news_id=news_id,
+                     headline=n.headline, author=n.author,
+                     date_time=date, url=n.url, content=n.content)
+
+        news2.save()
+
+        for t in n.tags:
+            news2.tags.add(t)
+            news2.save()
+
+    print("Successful")
+
+    return render(request, 'AggregatorApp/index.html')

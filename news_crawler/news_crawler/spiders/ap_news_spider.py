@@ -68,7 +68,8 @@ class ApNewsSpider2(scrapy.Spider):
             item['date_time'] = news.css(selector6).get()
 
             con = news.css(selector7).getall()
-            item['content'] = ' '.join(con)
+            # item['content'] = ' '.join(con)
+            item['content'] = con
             item['url'] = response.request.url
 
             y = news.xpath(selector8).get()

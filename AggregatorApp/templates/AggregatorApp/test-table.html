@@ -404,20 +404,17 @@
                                     <th>ID</th>
                                     <th>Headline</th>
                                     <th>Author</th>
-                                    <th>Date Time</th>
-                                    <th>Tags</th>
+                                    <th>Date</th>
                                     <th>URL</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for news in object_list %}
-                                    n = str(news.pk)
                                     <tr>
-                                        <td>{{ news.pk }}</td>
-                                        <td><a href="{% url 'AggregatorApp:news-detail' n %}">{{ news.headline }}</a></td>
+                                        <td>{{ news.id }}</td>
+                                        <td><a href="{% url 'AggregatorApp:news-detail' news.id %}">{{ news.headline }}</a></td>
                                         <td>{{ news.author }}</td>
                                         <td>{{ news.date_time }}</td>
-                                        <td>{{ news.tags }}</td>
                                         <td>{{ news.url }}</td>
                                     </tr>
                                 {% endfor %}

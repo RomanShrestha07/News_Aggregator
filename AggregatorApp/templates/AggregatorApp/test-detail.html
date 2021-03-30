@@ -393,28 +393,36 @@
                 <div class="row">
 
                     <!-- Content Column -->
-                    {% for news in object_list %}
-                        <div class="col-xl-6 col-lg-6">
-                            <!-- Illustrations -->
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold">{{ news.headline }}</h6>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="row">
-                                        <p class="justify-content-sm-start" style="margin-right: 20px;">{{ news.source }}</p>
-                                        <p class="justify-content-sm-between" style="margin-right: 20px;">{{ news.author }}</p>
-                                        <p class="justify-content-sm-end">{{ news.date_time }}</p><br/>
-                                        <p>{{ news.content }}</p>
-                                        <p>{{ news.tags }}</p>
-                                    </div>
+
+                    <div class="col-xl-12 col-lg-12">
+                        <!-- Illustrations -->
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold">{{ news.headline }}</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="row">
+                                    <p class="justify-content-sm-start"
+                                       style="margin-right: 20px;">{{ news.source }}</p>
+                                    <p class="justify-content-sm-between"
+                                       style="margin-right: 20px;">{{ news.author }}</p>
+                                    <p class="justify-content-sm-between"
+                                       style="margin-right: 20px;">{{ news.date_time }}</p>
+                                    <p class="justify-content-sm-between"
+                                       style="margin-right: 20px;">{{ news.news_id }}</p><br/>
+                                    <p class="justify-content-sm-end">{{ news.url }}</p><br/>
+                                    <p class="tags">Tags: {{ news.tags.all|join:", " }}</p><br/>
+                                    {% for c in news.content %}
+                                        <p>{{ c }}</p><br/>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
+                    </div>
+
 
                 </div>
                 <!-- /.container-fluid -->

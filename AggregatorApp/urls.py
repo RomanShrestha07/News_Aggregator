@@ -11,4 +11,5 @@ urlpatterns = [
     path('test-table/', TestTable.as_view(), name='test-table'),
     path('news-test/', NewsListView.as_view(), name='news-test'),
     path('news-detail/<pk>', NewsDetail.as_view(), name='news-detail'),
+    path('mango/', views.news_detail, name='mango'),
 ]

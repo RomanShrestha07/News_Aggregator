@@ -17,7 +17,7 @@ class MongoPipeline(object):
             27017
         )
         db = self.conn['my_news']
-        self.collection = db['AggregatorApp_news']
+        self.collection = db['AggregatorApp_rawnews']
 
     def process_item(self, item, spider):
         print('---------------------------------')
