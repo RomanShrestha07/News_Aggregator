@@ -24,7 +24,13 @@ class GuardianSpider(XMLFeedSpider, Spider):
 
         url = node.xpath("//*[local-name()='loc']/text()").get()
         item['url'] = url
-        item['tags'] = node.xpath("//*[local-name()='keywords']/text()").get()
+
+        y = node.xpath("//*[local-name()='keywords']/text()").get()
+        if y:
+            x = y.split(",")
+            item['tags'] = x
+        else:
+            item['tags'] = 'No tags'
 
         yield scrapy.Request(url, meta={'item': item}, callback=self.parse_dir_contents)
 

@@ -1,5 +1,6 @@
 # from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from djongo import models
 from django_countries.fields import CountryField
 from django.db.models.signals import post_save
@@ -74,3 +75,7 @@ class News(models.Model):
 
     def __str__(self):
         return self.headline
+
+    def get_absolute_url(self):
+        return reverse('AggregatorApp:news-detail',
+                       args=[self.date_time.year, self.date_time.month, self.date_time.day, self.news_id, self.pk])

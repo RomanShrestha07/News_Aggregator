@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # from .forms import UserRegistrationForm
 from .models import RawNews, Profile, News
@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import UserForm, ProfileForm
 from django.contrib.auth import views as auth_views
 from django.views.generic import ListView, DetailView
+from taggit.models import Tag
 
 
 def index(request):
@@ -53,7 +54,7 @@ class NewsDetail(DetailView):
     template_name = 'AggregatorApp/test-detail.html'
 
 
-def news_detail(request):
+def news_processing(request):
     news = RawNews.objects.all()
     c = 0
 
@@ -62,9 +63,14 @@ def news_detail(request):
         source = n.source
         date_time = n.date_time
         news_id = ''
-
+        print(c)
+        print(n.headline)
         if source == 'AP News':
             news_id = "AP-News-" + str(c)
+        elif source == 'The Guardian':
+            news_id = "Guardian-" + str(c)
+        elif source == 'Reuters':
+            news_id = "Reuters-" + str(c)
 
         date = date_time[0:10]
 
@@ -75,9 +81,23 @@ def news_detail(request):
         news2.save()
 
         for t in n.tags:
-            news2.tags.add(t)
+            try:
+                news2.tags.add(t.lower())
+            except:
+                news2.tags.add('-')
+
             news2.save()
 
     print("Successful")
 
-    return render(request, 'AggregatorApp/index.html')
+    return redirect('AggregatorApp:test-table')
+
+
+def news_list(request, tag_slug=None):
+    object_list = News.objects.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])
+
+    return render(request, 'AggregatorApp/test-table-2.html', {'object_list': object_list, 'tag': tag})

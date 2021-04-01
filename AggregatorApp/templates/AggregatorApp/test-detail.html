@@ -405,6 +405,7 @@
                             <!-- Card Body -->
                             <div class="card-body">
                                 <div class="row">
+
                                     <p class="justify-content-sm-start"
                                        style="margin-right: 20px;">{{ news.source }}</p>
                                     <p class="justify-content-sm-between"
@@ -415,6 +416,7 @@
                                        style="margin-right: 20px;">{{ news.news_id }}</p><br/>
                                     <p class="justify-content-sm-end">{{ news.url }}</p><br/>
                                     <p class="tags">Tags: {{ news.tags.all|join:", " }}</p><br/>
+
                                     {% for c in news.content %}
                                         <p>{{ c }}</p><br/>
                                     {% endfor %}

@@ -41,8 +41,14 @@ class ReutersSpider(XMLFeedSpider, Spider):
             old_item['author'] = author
 
         con = response.xpath(selector2).getall()
-        old_item['content'] = ' '.join(con)
+        # old_item['content'] = ' '.join(con)
+        old_item['content'] = con
 
-        old_item['tags'] = response.xpath(selector3).get()
+        y = response.xpath(selector3).get()
+        if y:
+            x = y.split(",")
+            old_item['tags'] = x
+        else:
+            old_item['tags'] = 'No tags'
 
         yield old_item
