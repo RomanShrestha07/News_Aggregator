@@ -406,6 +406,7 @@
                                     <th>Author</th>
                                     <th>Date</th>
                                     <th>URL</th>
+                                    <th>Section</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -416,11 +417,25 @@
                                         <td>{{ news.author }}</td>
                                         <td>{{ news.date_time }}</td>
                                         <td>{{ news.url }}</td>
+                                        <td>{{ news.section }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="m-0 font-weight-bold text-primary">
+                            <center>Sections</center>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        {% for news in object_list %}
+                            <p>{{ news.headline }} -- {{ news.section }}</p><br/>
+                        {% endfor %}
                     </div>
                 </div>
 

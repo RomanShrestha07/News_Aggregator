@@ -49,6 +49,7 @@ class ApNewsSpider2(scrapy.Spider):
             selector6 = 'span.Timestamp::attr(title)'
             selector7 = 'p::text'
             selector8 = '//meta[@name="keywords"]/@content'
+            selector9 = '//meta[@property="article:section"]/@content'
 
             # item = ApNewsItem2()
             item = NewsItem()
@@ -75,5 +76,7 @@ class ApNewsSpider2(scrapy.Spider):
             y = news.xpath(selector8).get()
             x = y.split(",")
             item['tags'] = x
+
+            item['section'] = news.xpath(selector9).get()
 
             yield item

@@ -413,13 +413,24 @@
                                     <p class="justify-content-sm-between"
                                        style="margin-right: 20px;">{{ news.date_time }}</p>
                                     <p class="justify-content-sm-between"
+                                       style="margin-right: 20px;">{{ news.section }}</p>
+                                    <p class="justify-content-sm-between"
                                        style="margin-right: 20px;">{{ news.news_id }}</p><br/>
                                     <p class="justify-content-sm-end">{{ news.url }}</p><br/>
                                     <p class="tags">Tags: {{ news.tags.all|join:", " }}</p><br/>
 
                                     {% for c in news.content %}
-                                        <p>{{ c }}</p><br/>
+                                        <p class="justify-content-start">{{ c }}</p><br/>
                                     {% endfor %}
+
+                                    {#                                    <h2>Similar posts</h2>#}
+                                    {#                                    {% for sn in similar_news %}#}
+                                    {#                                        <p>#}
+                                    {#                                            <a href="{{ sn.get_absolute_url }}">{{ sn.title }}</a>#}
+                                    {#                                        </p>#}
+                                    {#                                    {% empty %}#}
+                                    {#                                        There are no similar posts yet.#}
+                                    {#                                    {% endfor %}#}
                                 </div>
                             </div>
                         </div>

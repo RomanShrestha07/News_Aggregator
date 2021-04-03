@@ -49,15 +49,21 @@ class BlockedSources(models.Model):
     source_url = models.CharField(max_length=300)
 
 
+class AddedTags(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tag = models.CharField(max_length=100)
+
+
 class RawNews(models.Model):
     _id = models.ObjectIdField()
     source = models.CharField(max_length=50)
     headline = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
+    author = models.CharField(max_length=200)
     date_time = models.CharField(max_length=255)
     content = models.JSONField()
     url = models.CharField(max_length=255)
     tags = models.JSONField()
+    section = models.CharField(max_length=100)
 
     def __str__(self):
         return self.headline
@@ -65,13 +71,14 @@ class RawNews(models.Model):
 
 class News(models.Model):
     source = models.CharField(max_length=50)
-    news_id = models.CharField(max_length=20, null=True, blank=True)
+    news_id = models.CharField(max_length=20, unique=True)
     headline = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
+    author = models.CharField(max_length=200)
     date_time = models.DateField()
     content = models.JSONField()
     url = models.CharField(max_length=255)
     tags = TaggableManager()
+    section = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return self.headline

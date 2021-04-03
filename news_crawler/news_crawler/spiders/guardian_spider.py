@@ -39,7 +39,7 @@ class GuardianSpider(XMLFeedSpider, Spider):
 
         selector1 = '//a[@rel="author"]/text()'
         selector2 = 'p::text'
-        selector3 = '//meta[@name="keywords"]/@content'
+        selector3 = '//meta[@property="article:section"]/@content'
 
         author = response.xpath(selector1).get()
 
@@ -51,5 +51,7 @@ class GuardianSpider(XMLFeedSpider, Spider):
             old_item['author'] = response.xpath(selector1).get()
 
         old_item['content'] = response.css(selector2).getall()
+
+        old_item['section'] = response.xpath(selector3).get()
 
         yield old_item
