@@ -392,7 +392,7 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h4 class="m-0 font-weight-bold text-primary">
-                            <center>{{ section }} News</center>
+                            <center>User Tags</center>
                         </h4>
                     </div>
 
@@ -401,11 +401,34 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
+                                    <th>User</th>
+                                    <th>Tag</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for user_tags in profile %}:
+                                    {% for tags in user_tags.tag.all %}
+                                        <tr>
+                                            <td>{{ tags }}</td>
+                                            <td>{{ user.username }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
                                     <th>ID</th>
                                     <th>Headline</th>
                                     <th>Author</th>
                                     <th>Date</th>
-                                    {#                                    <th>URL</th>#}
                                     <th>Section</th>
                                     <th>Tags</th>
                                 </tr>
@@ -417,7 +440,6 @@
                                         <td><a href="{{ news.get_absolute_url }}">{{ news.headline }}</a></td>
                                         <td>{{ news.author }}</td>
                                         <td>{{ news.date_time }}</td>
-                                        {#                                        <td>{{ news.url }}</td>#}
                                         <td>{{ news.section }}</td>
                                         <td>
                                             {% if forloop.counter <= 5 %}
@@ -435,7 +457,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
 
                 <!-- /.container-fluid -->
 

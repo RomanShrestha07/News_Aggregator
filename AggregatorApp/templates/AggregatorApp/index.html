@@ -74,7 +74,7 @@
             <li class="nav-item">
 {#                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"#}
 {#                    aria-expanded="true" aria-controls="collapseTwo">#}
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{% url 'AggregatorApp:user-feed' %}">
                     <i class="fas fa-fw fa-user"></i>
                     <span>My News</span>
                 </a>
@@ -91,7 +91,7 @@
             <li class="nav-item">
 {#                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"#}
 {#                    aria-expanded="true" aria-controls="collapseUtilities">#}
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{% url 'AggregatorApp:category-top' %}">
                     <i class="fas fa-fw fa-line-chart"></i>
                     <span>Top Stories</span>
                 </a>
@@ -119,7 +119,7 @@
             <li class="nav-item">
 {#                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"#}
 {#                    aria-expanded="true" aria-controls="collapsePages">#}
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'world' %}">
                     <i class="fas fa-fw fa-globe"></i>
                     <span>World</span>
                 </a>
@@ -139,64 +139,63 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="charts.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'politics' %}">
                     <i class="fas fa-fw fa-handshake-o"></i>
                     <span>Politics</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'culture' %}">
                     <i class="fas fa-fw fa-gavel"></i>
-                    <span>Crime</span></a>
+                    <span>Culture</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'opinion' %}">
                     <i class="fas fa-fw fa-comment"></i>
                     <span>Opinion</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'environment' %}">
                     <i class="fas fa-fw fa-sun-o"></i>
-                    <span>Weather</span></a>
+                    <span>Environment</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'business' %}">
                     <i class="fas fa-fw fa-money"></i>
-                    <span>Money</span></a>
+                    <span>Business</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'science-technology' %}">
                     <i class="fas fa-fw fa-flask"></i>
-                    <span>Science</span></a>
+                    <span>Science and Tech</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-microchip"></i>
-                    <span>Technology</span></a>
-            </li>
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'sports' %}">
                     <i class="fas fa-fw fa-futbol"></i>
                     <span>Sports</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'entertainment' %}">
                     <i class="fas fa-fw fa-film"></i>
                     <span>Entertainment</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'AggregatorApp:category' 'other' %}">
+                    <i class="fas fa-fw fa-film"></i>
+                    <span>Other</span></a>
             </li>
 
             <!-- Divider -->

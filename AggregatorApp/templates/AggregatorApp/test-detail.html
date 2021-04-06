@@ -407,17 +407,25 @@
                                 <div class="row">
 
                                     <p class="justify-content-sm-start"
-                                       style="margin-right: 20px;">{{ news.source }}</p>
+                                       style="margin-right: 20px;">Source: {{ news.source }}</p>
                                     <p class="justify-content-sm-between"
-                                       style="margin-right: 20px;">{{ news.author }}</p>
+                                       style="margin-right: 20px;">Author: {{ news.author }}</p>
                                     <p class="justify-content-sm-between"
-                                       style="margin-right: 20px;">{{ news.date_time }}</p>
+                                       style="margin-right: 20px;">Publish Date: {{ news.date_time }}</p>
                                     <p class="justify-content-sm-between"
-                                       style="margin-right: 20px;">{{ news.section }}</p>
+                                       style="margin-right: 20px;">Section: {{ news.section }}</p>
                                     <p class="justify-content-sm-between"
-                                       style="margin-right: 20px;">{{ news.news_id }}</p><br/>
-                                    <p class="justify-content-sm-end">{{ news.url }}</p><br/>
-                                    <p class="tags">Tags: {{ news.tags.all|join:", " }}</p><br/>
+                                       style="margin-right: 20px;">News ID: {{ news.news_id }}</p><br/>
+                                    <p class="justify-content-sm-end">URL: {{ news.url }}</p><br/>
+{#                                    <p class="tags">Tags: {{ news.tags.all|join:", " }}</p><br/>#}
+                                    <p class="tags">Tags:
+                                        {% for tag in news.tags.all %}
+                                            <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
+                                                {{ tag.name }}
+                                            </a>
+                                            {% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
 
                                     {% for c in news.content %}
                                         <p class="justify-content-start">{{ c }}</p><br/>

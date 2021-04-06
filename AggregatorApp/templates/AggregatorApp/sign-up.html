@@ -379,40 +379,14 @@
                           <form method="post" style="margin: 0 20px 0 20px;">
                               {% csrf_token %}
                               {{ form.non_field_errors }}
-
-                              <div class="row form-group">
-                                  <div class="col-3">
-                                      <label>Full Name:</label>
-                                  </div>
-                                  <div class="col-9">
-                                      {% render_field app_user_form.full_name class="form-control" placeholder=form.full_name.label %}
-                                  </div>
-                              </div>
-
-                              <div class="row form-group">
-                                  <div class="col-3">
-                                      <label>Email:</label>
-                                  </div>
-                                  <div class="col-9">
-                                      {% render_field app_user_form.email class="form-control" placeholder=form.email.label %}
-                                  </div>
-                              </div>
-
-{#                              <div class="row form-group">#}
-{#                                  <div class="col-3">#}
-{#                                      <label>Picture:</label>#}
-{#                                  </div>#}
-{#                                  <div class="col-9">#}
-{#                                      {% render_field form.picture class="form-control" placeholder=form.picture.label %}#}
-{#                                  </div>#}
-{#                              </div>#}
+{#                              {{ form.as_p }}#}
 
                               <div class="row form-group">
                                   <div class="col-3">
                                       <label>Username:</label>
                                   </div>
                                   <div class="col-9">
-                                      {% render_field user_form.username class="form-control" placeholder=user_form.username.label %}
+                                      {% render_field form.username class="form-control" placeholder=form.username.label %}
                                   </div>
                               </div>
 
@@ -421,7 +395,7 @@
                                       <label>Password:</label>
                                   </div>
                                   <div class="col-9">
-                                      {% render_field user_form.password1 class="form-control" placeholder=user_form.password1.label %}
+                                      {% render_field form.password1 class="form-control" placeholder=form.password1.label %}
                                   </div>
                               </div>
 
@@ -430,7 +404,7 @@
                                       <label>Password Confirmation:</label>
                                   </div>
                                   <div class="col-9">
-                                      {% render_field user_form.password2 class="form-control" placeholder=user_form.password2.label %}
+                                      {% render_field form.password2 class="form-control" placeholder=form.password2.label %}
                                   </div>
                               </div>
 

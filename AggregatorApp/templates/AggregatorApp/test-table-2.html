@@ -393,7 +393,7 @@
                     <div class="card-header py-3">
                         {% if tag %}
                             <h4 class="m-0 font-weight-bold text-primary">
-                                <center>News tagged with "{{ tag.slug }}"</center>
+                                <center>News tagged with "{{ tag.name }}"</center>
                             </h4>
                         {% endif %}
                     </div>
@@ -407,7 +407,7 @@
                                     <th>Headline</th>
                                     <th>Author</th>
                                     <th>Date</th>
-                                    <th>URL</th>
+                                    <th>Section</th>
                                     <th>Tags</th>
                                 </tr>
                                 </thead>
@@ -418,14 +418,16 @@
                                         <td><a href="{{ news.get_absolute_url }}">{{ news.headline }}</a></td>
                                         <td>{{ news.author }}</td>
                                         <td>{{ news.date_time }}</td>
-                                        <td>{{ news.url }}</td>
+                                        <td>{{ news.section }}</td>
                                         <td>
-                                            {% for tag in news.tags.all %}
-                                                <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
-                                                    {{ tag.name }}
-                                                </a>
-                                                {% if not forloop.last %}, {% endif %}
-                                            {% endfor %}
+                                            {% if forloop.counter <= 5 %}
+                                                {% for tag in news.tags.all %}
+                                                    <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
+                                                        {{ tag.name }}
+                                                    </a>
+                                                    {% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

@@ -5,7 +5,8 @@ from djongo import models
 from django_countries.fields import CountryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from taggit.managers import TaggableManager, TagField
+from taggit.managers import TaggableManager
+from taggit.models import Tag
 
 
 class Profile(models.Model):
@@ -21,6 +22,7 @@ class Profile(models.Model):
     gender = models.CharField(max_length=15, choices=GENDER_CHOICES, default='Not to Specify')
     bio = models.TextField(max_length=500, blank=True)
     country = CountryField(blank_label='(Select Country)', blank=True)
+    tag = models.ManyToManyField('taggit.Tag')
 
     def __str__(self):
         return self.user.username
@@ -48,10 +50,13 @@ class BlockedSources(models.Model):
     source_name = models.CharField(max_length=100)
     source_url = models.CharField(max_length=300)
 
+    def __str__(self):
+        return self.source_name
 
-class AddedTags(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tag = models.CharField(max_length=100)
+
+# class AddedTags(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     tag = models.ManyToManyField('taggit.Tag')
 
 
 class RawNews(models.Model):

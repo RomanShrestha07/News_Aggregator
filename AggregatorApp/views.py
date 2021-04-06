@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # from .forms import UserRegistrationForm
@@ -10,12 +10,30 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import ListView, DetailView
 from taggit.models import Tag
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def index(request):
     return render(request, 'AggregatorApp/index.html')
 
 
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('AggregatorApp:index')
+    else:
+        form = UserCreationForm()
+    return render(request, 'AggregatorApp/sign-up.html', {'form': form})
+
+
+@login_required(login_url='/sign-in/')
 def update_profile(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
@@ -40,6 +58,7 @@ class SignIn(auth_views.LoginView):
     template_name = 'AggregatorApp/sign-in.html'
 
 
+@staff_member_required()
 def news_processing(request):
     news = RawNews.objects.all()
     c = 0
@@ -63,13 +82,17 @@ def news_processing(request):
 
             if s == 'u.s. news' or s == 'world news':
                 section = 'World'
-            if s == 'technology':
+            elif s == 'technology' or s == 'science':
                 section = 'Science and Technology'
-            if s == 'religion':
+            elif s == 'religion' or s == 'travel' or s == 'lifestyle':
                 section = 'Culture'
+            elif s == 'oddities':
+                section = 'Other'
             for t in n.tags:
                 if t.lower() == 'sport' or t.lower() == 'sports':
                     section = 'Sports'
+                if t.lower() == 'politics':
+                    section = 'Politics'
 
         elif source == 'The Guardian':
             news_id = "Guardian-" + str(c)
@@ -125,7 +148,7 @@ def news_processing(request):
             try:
                 news2.tags.add(t.lower())
             except:
-                news2.tags.add('-')
+                news2.tags.add('')
 
             news2.save()
 
@@ -166,81 +189,57 @@ class NewsDetail(DetailView):
 #     return render(request, 'AggregatorApp/test-detail.html', {'news': news, 'similar_news': similar_news})
 
 
-def category_world_news(request):
+def category(request, section):
     object_list = News.objects.all()
-    section = 'World News'
-    object_list = object_list.filter(section='World')
+    s = section
+    st = section.title()
+    if s == 'science-technology':
+        st = 'Science and Technology'
+
+    object_list = object_list.filter(section=st)
+
+    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': st})
+
+
+def category_top(request):
+    object_list = News.objects.all()
+    section = 'Top'
+
+    tag = get_object_or_404(Tag, slug='ap-top-news')
+    object_list = object_list.filter(tags__in=[tag])
 
     return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
 
 
-def category_sports(request):
-    object_list = News.objects.all()
-    section = 'Sports'
-    object_list = object_list.filter(section='Sports')
+def add_tags(request, tag_slug=None):
+    tag = None
+    user = request.user
 
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        tag_add = Profile(user=user, tag=tag)
+        tag_add.save()
 
-
-def category_business(request):
-    object_list = News.objects.all()
-    section = 'Business'
-    object_list = object_list.filter(section='Business')
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
+    return render(request, 'AggregatorApp/category-table.html')
 
 
-def category_science_technology(request):
-    object_list = News.objects.all()
-    section = 'Science and Technology'
-    object_list = object_list.filter(section='Science and Technology')
+def user_feed(request):
+    ol = News.objects.all()
+    profile = Profile.objects.filter(user=request.user)
+    nid_list = []
+    object_list = []
 
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
+    for user_tags in profile:
+        for tags in user_tags.tag.all():
+            test_list = ol.filter(tags__in=[tags])
 
+            for item in test_list:
+                nid_list.append(item.news_id)
 
-def category_entertainment(request):
-    object_list = News.objects.all()
-    section = 'Entertainment'
-    object_list = object_list.filter(section='Entertainment')
+    nid_set = set(nid_list)
+    print(nid_set)
 
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
+    for i in nid_set:
+        object_list.append(ol.get(news_id=i))
 
-
-def category_culture(request):
-    object_list = News.objects.all()
-    section = 'Culture'
-    object_list = object_list.filter(section='Culture')
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
-
-
-def category_opinion(request):
-    object_list = News.objects.all()
-    section = 'Opinion'
-    object_list = object_list.filter(section='Opinion')
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
-
-
-def category_politics(request):
-    object_list = News.objects.all()
-    section = 'Politics'
-    object_list = object_list.filter(section='Politics')
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
-
-
-def category_environment(request):
-    object_list = News.objects.all()
-    section = 'Environment'
-    object_list = object_list.filter(section='Environment')
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
-
-
-def category_other(request):
-    object_list = News.objects.all()
-    section = 'Other'
-    object_list = object_list.filter(section='Other')
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
+    return render(request, 'AggregatorApp/user-feed.html', {'object_list': object_list, 'profile': profile})
