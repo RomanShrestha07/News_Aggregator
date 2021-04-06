@@ -422,9 +422,27 @@
                                         <td>
                                             {% if forloop.counter <= 5 %}
                                                 {% for tag in news.tags.all %}
-                                                    <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
-                                                        {{ tag.name }}
-                                                    </a>
+                                                    {#                                                    <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">#}
+                                                    {#                                                        {{ tag.name }}#}
+                                                    {#                                                    </a>#}
+                                                    <div class="dropdown show">
+                                                        <a class="btn btn-secondary dropdown-toggle"
+                                                           href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}"
+                                                           role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                                                           aria-haspopup="true" aria-expanded="false">
+                                                            {{ tag.name }}
+                                                        </a>
+
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                            <a class="dropdown-item"
+                                                               href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">View</a>
+                                                            {% if user %}
+                                                                <a class="dropdown-item"
+                                                                   href="{% url "AggregatorApp:add-tag" tag.slug %}">Add
+                                                                    Tag</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
                                                     {% if not forloop.last %}, {% endif %}
                                                 {% endfor %}
                                             {% endif %}

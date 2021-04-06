@@ -22,7 +22,7 @@ class Profile(models.Model):
     gender = models.CharField(max_length=15, choices=GENDER_CHOICES, default='Not to Specify')
     bio = models.TextField(max_length=500, blank=True)
     country = CountryField(blank_label='(Select Country)', blank=True)
-    tag = models.ManyToManyField('taggit.Tag')
+    tag = models.ManyToManyField('taggit.Tag', blank=True, null=True)
 
     def __str__(self):
         return self.user.username

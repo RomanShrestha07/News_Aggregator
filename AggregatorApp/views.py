@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # from .forms import UserRegistrationForm
-from .models import RawNews, Profile, News
+from .models import RawNews, Profile, News, BlockedSources
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import UserForm, ProfileForm
@@ -148,7 +148,7 @@ def news_processing(request):
             try:
                 news2.tags.add(t.lower())
             except:
-                news2.tags.add('')
+                news2.tags.add('-')
 
             news2.save()
 
@@ -217,29 +217,47 @@ def add_tags(request, tag_slug=None):
 
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
-        tag_add = Profile(user=user, tag=tag)
-        tag_add.save()
+        profile = Profile.objects.get(user=user)
+        profile.tag.add(tag)
+        profile.save()
 
-    return render(request, 'AggregatorApp/category-table.html')
+    return redirect('AggregatorApp:user-feed')
 
 
+@login_required(login_url='/sign-in/')
 def user_feed(request):
     ol = News.objects.all()
     profile = Profile.objects.filter(user=request.user)
+    blocked = BlockedSources.objects.filter(user=request.user)
     nid_list = []
     object_list = []
 
     for user_tags in profile:
-        for tags in user_tags.tag.all():
-            test_list = ol.filter(tags__in=[tags])
+        if user_tags.tag:
+            for tags in user_tags.tag.all():
+                test_list = ol.filter(tags__in=[tags])
 
-            for item in test_list:
-                nid_list.append(item.news_id)
+                for item in test_list:
+                    nid_list.append(item.news_id)
+        else:
+            print('No tags.')
 
-    nid_set = set(nid_list)
-    print(nid_set)
+    if nid_list:
+        nid_set = set(nid_list)
+        print(nid_set)
 
-    for i in nid_set:
-        object_list.append(ol.get(news_id=i))
+        for i in nid_set:
+            r = ol.get(news_id=i)
+
+            if blocked:
+                for b in blocked:
+                    if b.source_name != r.source:
+                        object_list.append(r)
+                    else:
+                        print('News ' + str(r.news_id) + ' is blocked -- ' + str(r.source) + ' blocked.')
+            else:
+                object_list.append(r)
+    else:
+        print('No tags selected. -- 2')
 
     return render(request, 'AggregatorApp/user-feed.html', {'object_list': object_list, 'profile': profile})
