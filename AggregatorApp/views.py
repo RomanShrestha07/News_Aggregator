@@ -2,13 +2,13 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # from .forms import UserRegistrationForm
-from .models import RawNews, Profile, News, BlockedSources
+from .models import RawNews, Profile, News, BlockedSources, SavedNews
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import UserForm, ProfileForm
 from django.contrib.auth import views as auth_views
 from django.views.generic import ListView, DetailView
-from taggit.models import Tag
+from taggit.models import Tag, TaggedItem
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
@@ -261,3 +261,27 @@ def user_feed(request):
         print('No tags selected. -- 2')
 
     return render(request, 'AggregatorApp/user-feed.html', {'object_list': object_list, 'profile': profile})
+
+
+def save_news(request, pk):
+    user = request.user
+    news = News.objects.get(pk=pk)
+    tags = TaggedItem.objects.filter(object_id=pk)
+
+    news2 = SavedNews(user=user, source=news.source, headline=news.headline,
+                      author=news.author, date_time=news.date_time, tags=tags,
+                      url=news.url, content=news.content, section=news.section)
+
+    news2.save()
+    le = []
+
+    for t in tags:
+        print(t.tag.name)
+        print(type(t.tag.name))
+        le.append(t.tag.name)
+
+    for i in le:
+        news2.tags.add(i)
+        news2.save()
+
+    return redirect('AggregatorApp:index')

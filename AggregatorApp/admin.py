@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import AddedSources, BlockedSources, RawNews, Profile, News
+from .models import BlockedSources, RawNews, Profile, News, SavedNews
 
 admin.site.register(Profile)
-admin.site.register(AddedSources)
+admin.site.register(SavedNews)
 admin.site.register(BlockedSources)
 
 

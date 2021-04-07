@@ -23,4 +23,5 @@ urlpatterns = [
 
     path('add-tag/<slug:tag_slug>/', views.add_tags, name='add-tag'),
     path('user-feed/', views.user_feed, name='user-feed'),
+    path('add-news/<pk>',  views.save_news, name='save-news'),
 ]

@@ -22,7 +22,7 @@ class Profile(models.Model):
     gender = models.CharField(max_length=15, choices=GENDER_CHOICES, default='Not to Specify')
     bio = models.TextField(max_length=500, blank=True)
     country = CountryField(blank_label='(Select Country)', blank=True)
-    tag = models.ManyToManyField('taggit.Tag', blank=True, null=True)
+    tag = models.ManyToManyField('taggit.Tag', blank=True)
 
     def __str__(self):
         return self.user.username
@@ -39,12 +39,6 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
-class AddedSources(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    source_name = models.CharField(max_length=100)
-    source_url = models.CharField(max_length=300)
-
-
 class BlockedSources(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     source_name = models.CharField(max_length=100)
@@ -52,11 +46,6 @@ class BlockedSources(models.Model):
 
     def __str__(self):
         return self.source_name
-
-
-# class AddedTags(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     tag = models.ManyToManyField('taggit.Tag')
 
 
 class RawNews(models.Model):
@@ -91,3 +80,18 @@ class News(models.Model):
     def get_absolute_url(self):
         return reverse('AggregatorApp:news-detail',
                        args=[self.date_time.year, self.date_time.month, self.date_time.day, self.news_id, self.pk])
+
+
+class SavedNews(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    source = models.CharField(max_length=50)
+    headline = models.CharField(max_length=255)
+    author = models.CharField(max_length=200)
+    date_time = models.DateField()
+    content = models.JSONField()
+    url = models.CharField(max_length=255)
+    tags = TaggableManager()
+    section = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.headline
