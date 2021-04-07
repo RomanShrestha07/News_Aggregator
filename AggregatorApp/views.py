@@ -269,19 +269,20 @@ def save_news(request, pk):
     tags = TaggedItem.objects.filter(object_id=pk)
 
     news2 = SavedNews(user=user, source=news.source, headline=news.headline,
-                      author=news.author, date_time=news.date_time, tags=tags,
+                      author=news.author, date_time=news.date_time,
                       url=news.url, content=news.content, section=news.section)
 
     news2.save()
-    le = []
 
     for t in tags:
         print(t.tag.name)
         print(type(t.tag.name))
-        le.append(t.tag.name)
-
-    for i in le:
-        news2.tags.add(i)
+        news2.tags.add(t.tag)
         news2.save()
 
-    return redirect('AggregatorApp:index')
+    return redirect('AggregatorApp:saved-news')
+
+
+class SavedNewsListView(ListView):
+    model = SavedNews
+    template_name = 'AggregatorApp/saved-news.html'
