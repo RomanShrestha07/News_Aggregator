@@ -40,6 +40,8 @@ class GuardianSpider(XMLFeedSpider, Spider):
         selector1 = '//a[@rel="author"]/text()'
         selector2 = 'p::text'
         selector3 = '//meta[@property="article:section"]/@content'
+        selector4 = '//meta[@property="og:image"]/@content'
+        selector5 = '//meta[@property="og:description"]/@content'
 
         author = response.xpath(selector1).get()
 
@@ -53,5 +55,7 @@ class GuardianSpider(XMLFeedSpider, Spider):
         old_item['content'] = response.css(selector2).getall()
 
         old_item['section'] = response.xpath(selector3).get()
+        old_item['image'] = response.xpath(selector4).get()
+        old_item['description'] = response.xpath(selector5).get()
 
         yield old_item

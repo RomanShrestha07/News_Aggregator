@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Profile</title>
 </head>
 <body>
+    <h2>{{ user.username }}</h2>
     <form method="post">
         {% csrf_token %}
         {{ user_form.as_p }}

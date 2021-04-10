@@ -31,6 +31,8 @@ class ReutersSpider(XMLFeedSpider, Spider):
         selector2 = '//div[@class="ArticleBodyWrapper"]/p/text()'
         selector3 = '//meta[@name="keywords"]/@content'
         selector4 = '//meta[@name="analyticsAttributes.topicChannel"]/@content'
+        selector5 = '//meta[@property="og:image"]/@content'
+        selector6 = '//meta[@property="og:description"]/@content'
 
         author = response.xpath(selector1).get()
 
@@ -53,5 +55,7 @@ class ReutersSpider(XMLFeedSpider, Spider):
             old_item['tags'] = 'No tags'
 
         old_item['section'] = response.xpath(selector4).get()
+        old_item['image'] = response.xpath(selector5).get()
+        old_item['description'] = response.xpath(selector6).get()
 
         yield old_item

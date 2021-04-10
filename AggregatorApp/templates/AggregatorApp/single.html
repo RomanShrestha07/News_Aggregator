@@ -1,0 +1,179 @@
+{% extends 'AggregatorApp/base.html' %}
+
+{% block css-head %}
+    <style>
+        .entity_footer {
+            border-bottom: 0px;
+        }
+
+        .tag {
+            margin-top: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}{{ news.headline }}{% endblock %}
+
+{% block content %}
+    <section id="entity_section" class="entity_section">
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-8">
+                    <div class="entity_wrapper">
+
+                        <div class="entity_title">
+                            <h1>{{ news.headline }}</h1>
+                        </div>
+                        <!-- entity_title -->
+
+                        <div class="entity_meta">
+                            Source: <a href="#"> {{ news.source }}</a>&nbsp
+                            Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                            Author: <a href="#"> {{ news.author }}</a>
+                        </div>
+                        <!-- entity_meta -->
+
+                        <div class="entity_rating"></div>
+                        <!-- entity_rating -->
+
+                        <div class="entity_thumb">
+                            <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                        </div>
+                        <!-- entity_thumb -->
+
+                        <div class="entity_content">
+                            {% for con in news.content %}
+                                <p class="text-justify">{{ con }}</p>
+                            {% endfor %}
+                        </div>
+                        <!-- entity_content -->
+
+                        <div class="entity_footer">
+                            <div class="entity_tag">
+                                {% for tag in news.tags.all %}
+                                    <span class="tag">
+                                        <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
+                                            {{ tag.name }}
+                                        </a>
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            <!-- entity_tag -->
+                        </div>
+                        <!-- entity_footer -->
+                    </div>
+                    <!-- entity_wrapper -->
+                    <br/><hr>
+
+                    <div class="related_news">
+                        <div class="entity_inner__title header_purple">
+                            <h2><a href="#">Related News</a></h2>
+                        </div>
+                        <!-- entity_title -->
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="#"><img class="media-object" src="assets/img/cat-mobi-sm1.jpg"
+                                                         alt="Generic placeholder image"></a>
+                                    </div>
+                                    <div class="media-body">
+                                        <span class="tag purple"><a href="category.html"
+                                                                    target="_self">Mobile</a></span>
+
+                                        <h3 class="media-heading"><a href="single.html" target="_self">Apple launches
+                                            photo-centric wrist
+                                            watch for Android</a></h3>
+                                        <span class="media-date"><a href="#">10Aug- 2015</a>,  by: <a
+                                                href="#">Eric joan</a></span>
+
+                                        <div class="media_social">
+                                            <span><a href="#"><i class="fa fa-share-alt"></i>424</a> Shares</span>
+                                            <span><a href="#"><i class="fa fa-comments-o"></i>4</a> Comments</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="#"><img class="media-object" src="assets/img/cat-mobi-sm3.jpg"
+                                                         alt="Generic placeholder image"></a>
+                                    </div>
+                                    <div class="media-body">
+                                        <span class="tag purple"><a href="category.html"
+                                                                    target="_self">Mobile</a></span>
+
+                                        <h3 class="media-heading"><a href="single.html" target="_self">The Portable
+                                            Charger or data
+                                            cable</a></h3>
+                                        <span class="media-date"><a href="#">10Aug- 2015</a>,  by: <a
+                                                href="#">Eric joan</a></span>
+
+                                        <div class="media_social">
+                                            <span><a href="#"><i class="fa fa-share-alt"></i>424</a> Shares</span>
+                                            <span><a href="#"><i class="fa fa-comments-o"></i>4</a> Comments</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="#"><img class="media-object" src="assets/img/cat-mobi-sm2.jpg"
+                                                         alt="Generic placeholder image"></a>
+                                    </div>
+                                    <div class="media-body">
+                                        <span class="tag purple"><a href="category.html"
+                                                                    target="_self">Mobile</a></span>
+
+                                        <h3 class="media-heading"><a href="single.html" target="_self">Iphone 6 launches
+                                            white & Grey
+                                            colors handset</a></h3>
+                                        <span class="media-date"><a href="#">10Aug- 2015</a>,  by: <a
+                                                href="#">Eric joan</a></span>
+
+                                        <div class="media_social">
+                                            <span><a href="#"><i class="fa fa-share-alt"></i>424</a> Shares</span>
+                                            <span><a href="#"><i class="fa fa-comments-o"></i>4</a> Comments</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="#"><img class="media-object" src="assets/img/cat-mobi-sm4.jpg"
+                                                         alt="Generic placeholder image"></a>
+                                    </div>
+                                    <div class="media-body">
+                                        <span class="tag purple"><a href="category.html"
+                                                                    target="_self">Mobile</a></span>
+                                        <a href="single.html" target="_self"><h3 class="media-heading">Fully new look
+                                            slim handset
+                                            like</h3></a>
+                                        <span class="media-date"><a href="#">10Aug- 2015</a>,  by: <a
+                                                href="#">Eric joan</a></span>
+
+                                        <div class="media_social">
+                                            <span><a href="#"><i class="fa fa-share-alt"></i>424</a> Shares</span>
+                                            <span><a href="#"><i class="fa fa-comments-o"></i>4</a> Comments</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Related news -->
+                </div>
+                <!--Left Section-->
+
+                {% include 'AggregatorApp/parts/side-bar-category.html' %}
+                <!-- row -->
+
+            </div>
+            <!-- container -->
+        </div>
+
+    </section>
+    <!-- Entity Section Wrapper -->
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends 'AggregatorApp/base.html' %}
+{% load static %}
+
+{% block title %}{{ section }}{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="entity_wrapper">
+
+                    <div class="entity_title header_purple">
+                        <h1><a href="category.html" target="_blank">{{ section }}</a></h1>
+                    </div>
+                    <!-- entity_title -->
+
+                    {% if top %}
+                        {% for news in top %}
+                            <div class="entity_thumb">
+                                <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                            </div>
+                            <!-- entity_thumb -->
+
+                            <div class="entity_title">
+                                <a href="{{ news.get_absolute_url }}" target="_blank"><h3>{{ news.headline }}</h3></a>
+                            </div>
+                            <!-- entity_title -->
+
+                            <div class="article_date">
+                                Source: <a href="#"> {{ news.source }}</a>&nbsp
+                                Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                                Author: <a href="#"> {{ news.author }}</a>
+                            </div>
+                            <!-- entity_meta -->
+
+                            <div class="entity_content">
+                                {{ news.description }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <hr>
+                        <h1>No news.</h1>
+                    {% endif %}
+                    <!-- entity_content -->
+                </div>
+
+                {% if row_top %}
+                    <hr/>
+                {% endif %}
+
+                <!-- entity_wrapper -->
+                <div class="row">
+                    {% for news in row_top %}
+                        <div class="col-md-6">
+                            <div class="category_article_body">
+
+                                <div class="top_article_img">
+                                    <a href="single.html" target="_self">
+                                        <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                                    </a>
+                                </div>
+                                <!-- top_article_img -->
+
+                                <div class="category_article_title">
+                                    <h5><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a></h5>
+                                </div>
+                                <!-- category_article_title -->
+
+                                <div class="article_date">
+                                    Source: <a href="#"> {{ news.source }}</a>&nbsp
+                                    Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                                    Author: <a href="#"> {{ news.author }}</a>
+                                </div>
+                                <!-- article_date -->
+
+                                <div class="category_article_content">{{ news.description }}</div>
+                                <!-- category_article_content -->
+                            </div>
+                            <!-- category_article_body -->
+                        </div>
+                    {% endfor %}
+                    <!-- col-md-6 -->
+                </div>
+
+                {% if row_bottom %}
+                    <hr>
+                {% endif %}
+
+                <!-- row -->
+                <div class="row">
+                    {% for news in row_bottom %}
+                        <div class="col-md-6">
+                            <div class="category_article_body">
+
+                                <div class="top_article_img">
+                                    <a href="single.html" target="_self">
+                                        <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                                    </a>
+                                </div>
+                                <!-- top_article_img -->
+
+                                <div class="category_article_title">
+                                    <h5><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a></h5>
+                                </div>
+                                <!-- category_article_title -->
+
+                                <div class="article_date">
+                                    Source: <a href="#"> {{ news.source }}</a>&nbsp
+                                    Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                                    Author: <a href="#"> {{ news.author }}</a>
+                                </div>
+                                <!-- article_date -->
+
+                                <div class="category_article_content">{{ news.description }}</div>
+                                <!-- category_article_content -->
+                            </div>
+                            <!-- category_article_body -->
+                        </div>
+                    {% endfor %}
+                    <!-- col-md-6 -->
+                </div>
+
+                <hr style="border-top: 2px solid #000;">
+
+                <div class="category_section camera">
+                    <!-- article_title -->
+                    {% for news in rest %}
+                        <div class="category_article_wrapper">
+                            <div class="row">
+                                <div class="col-md-5">
+
+                                    <div class="top_article_img">
+                                        <a href="single.html" target="_self">
+                                            <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                                        </a>
+                                    </div>
+                                    <!-- top_article_img -->
+
+                                </div>
+                                <div class="col-md-7">
+                                    <span class="tag orange">{{ news.section }}</span>
+
+                                    <div class="category_article_title">
+                                        <h2><a href="{{ news.get_absolute_url }}" target="_self">{{ news.headline }}</a></h2>
+                                    </div>
+                                    <!-- category_article_title -->
+
+                                    <div class="article_date">
+                                        Source: <a href="#"> {{ news.source }}</a>&nbsp
+                                        Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                                        Author: <a href="#"> {{ news.author }}</a>
+                                    </div>
+                                    <!----article_date------>
+                                    <!-- category_article_wrapper -->
+
+                                    <div class="category_article_content">
+                                        {{ news.description }}
+                                    </div>
+                                    <!-- category_article_content -->
+                                </div>
+                                <!-- col-md-7 -->
+                            </div>
+                            <!-- row -->
+                            <hr>
+                        </div>
+                        <!-- category_article_wrapper -->
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- col-md-8 -->
+
+            {% include 'AggregatorApp/parts/side-bar-category.html' %}
+            <!-- col-md-4 -->
+        </div>
+        <!-- row -->
+    </div>
+    <!-- container -->
+{% endblock %}

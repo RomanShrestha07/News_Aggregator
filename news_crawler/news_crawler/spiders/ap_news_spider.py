@@ -50,6 +50,8 @@ class ApNewsSpider2(scrapy.Spider):
             selector7 = 'p::text'
             selector8 = '//meta[@name="keywords"]/@content'
             selector9 = '//meta[@property="article:section"]/@content'
+            selector10 = '//meta[@property="og:image"]/@content'
+            selector11 = '//meta[@property="og:description"]/@content'
 
             # item = ApNewsItem2()
             item = NewsItem()
@@ -78,5 +80,7 @@ class ApNewsSpider2(scrapy.Spider):
             item['tags'] = x
 
             item['section'] = news.xpath(selector9).get()
+            item['image'] = news.xpath(selector10).get()
+            item['description'] = news.xpath(selector11).get()
 
             yield item

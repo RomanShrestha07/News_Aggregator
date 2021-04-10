@@ -58,6 +58,8 @@ class RawNews(models.Model):
     url = models.CharField(max_length=255)
     tags = models.JSONField()
     section = models.CharField(max_length=100)
+    image = models.CharField(max_length=255)
+    description = models.TextField()
 
     def __str__(self):
         return self.headline
@@ -73,6 +75,8 @@ class News(models.Model):
     url = models.CharField(max_length=255)
     tags = TaggableManager()
     section = models.CharField(max_length=100, null=True, blank=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField()
 
     def __str__(self):
         return self.headline
@@ -92,6 +96,8 @@ class SavedNews(models.Model):
     url = models.CharField(max_length=255)
     tags = TaggableManager()
     section = models.CharField(max_length=100, null=True, blank=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField()
 
     def __str__(self):
         return self.headline

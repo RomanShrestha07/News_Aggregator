@@ -10,12 +10,13 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import ListView, DetailView
 from taggit.models import Tag, TaggedItem
 from django.db.models import Count
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
 
 
 def index(request):
-    return render(request, 'AggregatorApp/index.html')
+    return render(request, 'AggregatorApp/base.html')
 
 
 def signup(request):
@@ -28,6 +29,8 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect('AggregatorApp:index')
+        else:
+            messages.error(request, 'Please enter the data according to the guidelines below.')
     else:
         form = UserCreationForm()
     return render(request, 'AggregatorApp/sign-up.html', {'form': form})
@@ -61,96 +64,100 @@ class SignIn(auth_views.LoginView):
 @staff_member_required()
 def news_processing(request):
     news = RawNews.objects.all()
+    processed_news = News.objects.all()
     c = 0
 
-    for n in news:
-        c = c + 1
-        source = n.source
-        date_time = n.date_time
-        section = n.section
-        if section:
-            s = section.lower()
-        else:
-            s = 'none'
-        news_id = ''
-
-        print(c)
-        print(n.headline)
-
-        if source == 'AP News':
-            news_id = "AP-News-" + str(c)
-
-            if s == 'u.s. news' or s == 'world news':
-                section = 'World'
-            elif s == 'technology' or s == 'science':
-                section = 'Science and Technology'
-            elif s == 'religion' or s == 'travel' or s == 'lifestyle':
-                section = 'Culture'
-            elif s == 'oddities':
-                section = 'Other'
-            for t in n.tags:
-                if t.lower() == 'sport' or t.lower() == 'sports':
-                    section = 'Sports'
-                if t.lower() == 'politics':
-                    section = 'Politics'
-
-        elif source == 'The Guardian':
-            news_id = "Guardian-" + str(c)
-
-            if s == 'sports' or s == 'football' or s == 'sport':
-                section = 'Sports'
-            elif s == 'money' or s == 'business':
-                section = 'Business'
-            elif s == 'technology' or s == 'science':
-                section = 'Science and Technology'
-            elif s == 'music' or s == 'books' or s == 'film' or s == 'fashion' or s == 'stage' or s == 'games':
-                section = 'Entertainment'
-            elif s == 'society' or s == 'culture' or s == 'art and design' or s == 'travel' or s == 'food' or s == 'life and style':
-                section = 'Culture'
-            elif s == 'opinion':
-                section = 'Opinion'
-            elif s == 'world news' or s == 'us news' or s == 'uk news' or s == 'australia news' or s == 'global development':
-                section = 'World'
-            elif s == 'politics':
-                section = 'Politics'
-            elif s == 'environment':
-                section = 'Environment'
-            elif s == 'education' or s == 'television & radio' or s == 'media' or s == 'none' or s == 'info':
-                section = 'Other'
+    if news.headline != processed_news.headline:
+        for n in news:
+            c = c + 1
+            source = n.source
+            date_time = n.date_time
+            section = n.section
+            if section:
+                s = section.lower()
             else:
-                section = 'Other'
+                s = 'none'
+            news_id = ''
 
-        elif source == 'Reuters':
-            news_id = "Reuters-" + str(c)
+            print(c)
+            print(n.headline)
 
-            if s == 'technology':
-                section = 'Science and Technology'
-            if s == 'markets':
-                section = 'Business'
-            if s == 'lifestyle':
-                section = 'Culture'
-            for t in n.tags:
-                if t.lower() == 'sport':
+            if source == 'AP News':
+                news_id = "AP-News-" + str(c)
+
+                if s == 'u.s. news' or s == 'world news':
+                    section = 'World'
+                elif s == 'technology' or s == 'science':
+                    section = 'Science and Technology'
+                elif s == 'religion' or s == 'travel' or s == 'lifestyle':
+                    section = 'Culture'
+                elif s == 'oddities':
+                    section = 'Other'
+                elif s == 'ap fact check':
+                    section = 'Opinion'
+                for t in n.tags:
+                    if t.lower() == 'sport' or t.lower() == 'sports':
+                        section = 'Sports'
+                    if t.lower() == 'politics':
+                        section = 'Politics'
+
+            elif source == 'The Guardian':
+                news_id = "Guardian-" + str(c)
+
+                if s == 'sports' or s == 'football' or s == 'sport':
                     section = 'Sports'
-                elif 'entertainment' in t.lower():
+                elif s == 'money' or s == 'business':
+                    section = 'Business'
+                elif s == 'technology' or s == 'science':
+                    section = 'Science and Technology'
+                elif s == 'music' or s == 'books' or s == 'film' or s == 'fashion' or s == 'stage' or s == 'games':
                     section = 'Entertainment'
+                elif s == 'society' or s == 'culture' or s == 'art and design' or s == 'travel' or s == 'food' or s == 'life and style':
+                    section = 'Culture'
+                elif s == 'opinion':
+                    section = 'Opinion'
+                elif s == 'world news' or s == 'us news' or s == 'uk news' or s == 'australia news' or s == 'global development':
+                    section = 'World'
+                elif s == 'politics':
+                    section = 'Politics'
+                elif s == 'environment':
+                    section = 'Environment'
+                elif s == 'education' or s == 'television & radio' or s == 'media' or s == 'none' or s == 'info':
+                    section = 'Other'
+                else:
+                    section = 'Other'
 
-        date = date_time[0:10]
+            elif source == 'Reuters':
+                news_id = "Reuters-" + str(c)
 
-        news2 = News(source=source, news_id=news_id,
-                     headline=n.headline, author=n.author,
-                     date_time=date, url=n.url, content=n.content,
-                     section=section)
+                if s == 'technology':
+                    section = 'Science and Technology'
+                if s == 'markets':
+                    section = 'Business'
+                if s == 'lifestyle':
+                    section = 'Culture'
+                for t in n.tags:
+                    if t.lower() == 'sport':
+                        section = 'Sports'
+                    elif 'entertainment' in t.lower():
+                        section = 'Entertainment'
 
-        news2.save()
+            date = date_time[0:10]
 
-        for t in n.tags:
-            try:
-                news2.tags.add(t.lower())
-            except:
-                news2.tags.add('-')
+            news2 = News(source=source, news_id=news_id,
+                         headline=n.headline, author=n.author,
+                         date_time=date, url=n.url, content=n.content,
+                         section=section, image=n.image, description=n.description)
 
             news2.save()
+
+            for t in n.tags:
+                try:
+                    news2.tags.add(t.lower())
+                except:
+                    news2.tags.add('-')
+
+                news2.save()
 
     print("Successful")
 
@@ -175,40 +182,110 @@ def news_list_table(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         object_list = object_list.filter(tags__in=[tag])
 
-    return render(request, 'AggregatorApp/test-table-2.html', {'object_list': object_list, 'tag': tag})
+    popular_news = []
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pop = News.objects.filter(tags__in=[popular_tag])
+
+    for item in pop:
+        if item not in object_list:
+            popular_news.append(item)
+
+    return render(request, 'AggregatorApp/saved-news.html',
+                  {'object_list': object_list, 'tag': tag, 'popular_news': popular_news})
 
 
 class NewsDetail(DetailView):
     model = News
-    template_name = 'AggregatorApp/test-detail.html'
+    template_name = 'AggregatorApp/single.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(NewsDetail, self).get_context_data(**kwargs)
 
-# def news_detail(request, year, month, day, news_id, pk):
-#     news = get_object_or_404(News, news_id=news_id, pk=pk)
-#     similar_news = news.tags.similar_objects()
-#     return render(request, 'AggregatorApp/test-detail.html', {'news': news, 'similar_news': similar_news})
+        popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+        popular_news = News.objects.filter(tags__in=[popular_tag])
+
+        context['popular_news'] = popular_news
+        return context
 
 
 def category(request, section):
     object_list = News.objects.all()
     s = section
     st = section.title()
+
+    top = []
+    row_top = []
+    row_bottom = []
+    rest = []
+    popular_news = []
+    cultural_news = []
+    opinion_news = []
+    other_news = []
+
     if s == 'science-technology':
         st = 'Science and Technology'
 
-    object_list = object_list.filter(section=st)
+    if section == 'top':
+        tag = get_object_or_404(Tag, slug='ap-top-news')
+        object_list = object_list.filter(tags__in=[tag])
+    else:
+        object_list = object_list.filter(section=st)
 
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': st})
+    length = len(object_list)
+    if object_list:
+        top.append(object_list[0])
+
+    if length == 2:
+        for i in range(1, length):
+            item = object_list[i]
+            rest.append(item)
+
+    elif length == 3:
+        for i in range(1, length):
+            item = object_list[i]
+            row_top.append(item)
+
+    elif length == 4:
+        for i in range(1, length):
+            item = object_list[i]
+            if i <= 2:
+                row_top.append(item)
+            else:
+                rest.append(item)
+
+    elif length >= 5:
+        for i in range(1, length):
+            item = object_list[i]
+            if i <= 2:
+                row_top.append(item)
+            elif 2 < i <= 4:
+                row_bottom.append(item)
+            else:
+                rest.append(item)
+
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pop = News.objects.filter(tags__in=[popular_tag])
+    cul = News.objects.filter(section='Culture')
+    opi = News.objects.filter(section='Opinion')
+    oth = News.objects.filter(section='Other')
+
+    popular_news = not_in(pop, popular_news, top, row_top, row_bottom, rest)
+    cultural_news = not_in(cul, cultural_news, top, row_top, row_bottom, rest)
+    opinion_news = not_in(opi, opinion_news, top, row_top, row_bottom, rest)
+    other_news = not_in(oth, other_news, top, row_top, row_bottom, rest)
+
+    return render(request, 'AggregatorApp/category.html',
+                  {'object_list': object_list, 'section': st, 'top': top,
+                   'row_top': row_top, 'row_bottom': row_bottom, 'rest': rest,
+                   'popular_news': popular_news, 'cultural_news': cultural_news,
+                   'opinion_news': opinion_news, 'other_news': other_news})
 
 
-def category_top(request):
-    object_list = News.objects.all()
-    section = 'Top'
-
-    tag = get_object_or_404(Tag, slug='ap-top-news')
-    object_list = object_list.filter(tags__in=[tag])
-
-    return render(request, 'AggregatorApp/category-table.html', {'object_list': object_list, 'section': section})
+def not_in(og_list, new_list, top, row_top, row_bottom, rest):
+    for item in og_list:
+        if item not in top and item not in row_top and item not in row_bottom and item not in rest:
+            new_list.append(item)
+    return new_list
 
 
 def add_tags(request, tag_slug=None):
@@ -260,7 +337,16 @@ def user_feed(request):
     else:
         print('No tags selected. -- 2')
 
-    return render(request, 'AggregatorApp/user-feed.html', {'object_list': object_list, 'profile': profile})
+    popular_news = []
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pop = News.objects.filter(tags__in=[popular_tag])
+
+    for item in pop:
+        if item not in object_list:
+            popular_news.append(item)
+
+    return render(request, 'AggregatorApp/user-feed.html',
+                  {'object_list': object_list, 'profile': profile, 'popular_news': popular_news})
 
 
 def save_news(request, pk):
@@ -270,19 +356,28 @@ def save_news(request, pk):
 
     news2 = SavedNews(user=user, source=news.source, headline=news.headline,
                       author=news.author, date_time=news.date_time,
-                      url=news.url, content=news.content, section=news.section)
+                      url=news.url, content=news.content, section=news.section,
+                      image=news.image, description=news.description)
 
     news2.save()
 
     for t in tags:
-        print(t.tag.name)
-        print(type(t.tag.name))
         news2.tags.add(t.tag)
         news2.save()
 
     return redirect('AggregatorApp:saved-news')
 
 
-class SavedNewsListView(ListView):
-    model = SavedNews
-    template_name = 'AggregatorApp/saved-news.html'
+@login_required(login_url='/sign-in/')
+def saved_news_list_view(request):
+    object_list = SavedNews.objects.filter(user=request.user)
+
+    popular_news = []
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pop = News.objects.filter(tags__in=[popular_tag])
+
+    for item in pop:
+        if item not in object_list:
+            popular_news.append(item)
+
+    return render(request, 'AggregatorApp/saved-news.html', {'object_list': object_list, 'popular_news': popular_news})

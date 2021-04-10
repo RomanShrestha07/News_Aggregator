@@ -1,0 +1,127 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Times Daily - {% block title %}{% endblock %}</title>
+
+    <!-- favicon -->
+    <link href="{% static 'assets/img/times_daily_favicon.png' %}" rel=icon>
+
+    <!-- web-fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,500' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- font-awesome -->
+    <link href="{% static 'assets/fonts/font-awesome/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- Mobile Menu Style -->
+    <link href="{% static 'assets/css/mobile-menu.css' %}" rel="stylesheet">
+
+    <!-- Owl carousel -->
+    <link href="{% static 'assets/css/owl.carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/owl.theme.default.min.css' %}" rel="stylesheet">
+    <!-- Theme Style -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        .row {
+            margin-bottom: 30px;
+        }
+
+        .col-md-6 {
+            border-right: 1px solid #e2e2e2;
+        }
+
+        hr {
+            border-top: 1px solid #e2e2e2;
+        }
+
+        .widget_title::after {
+            bottom: 22px;
+        }
+
+        .footer_widget_title::after {
+            bottom: 22px;
+        }
+    </style>
+
+    {% block css-head %}{% endblock %}
+    {% block script-head %}{% endblock %}
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar">
+<div id="main-wrapper" style="overflow: auto">
+
+    <!-- Page Preloader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="status-mes"></div>
+        </div>
+    </div>
+    <!-- preloader -->
+
+    <div class="uc-mobile-menu-pusher">
+
+        <div class="content-wrapper">
+
+            <section id="header_section_wrapper" class="header_section_wrapper">
+                <div class="container">
+                    {% include 'AggregatorApp/parts/top-bar.html' %}
+                    <!-- Header Section -->
+
+                    {% include 'AggregatorApp/parts/nav-bar.html' %}
+                    <!-- .navigation-section -->
+                </div>
+                <!-- .container -->
+            </section>
+            <!-- header_section_wrapper -->
+
+            {% block content %}{% endblock %}
+            <!-- container -->
+
+            {% include 'AggregatorApp/parts/footer.html' %}
+            <!-- footer -->
+        </div>
+        <!-- #content-wrapper -->
+
+    </div>
+    <!-- .offcanvas-pusher -->
+
+    {#    <a href="#" class="crunchify-top"><i class="fa fa-angle-up" aria-hidden="true"></i></a>#}
+
+    {% include 'AggregatorApp/parts/mobile-menu.html' %}
+    <!-- .uc-mobile-menu -->
+</div>
+<!-- #main-wrapper -->
+
+<!-- jquery Core-->
+<script src="{% static 'assets/js/jquery-2.1.4.min.js' %}"></script>
+
+<!-- Bootstrap -->
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+<!-- Theme Menu -->
+<script src="{% static 'assets/js/mobile-menu.js' %}"></script>
+
+<!-- Owl carousel -->
+<script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+
+<!-- Theme Script -->
+<script src="{% static 'assets/js/script.js' %}"></script>
+
+{% block script-bottom %}{% endblock %}
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from .views import (SignIn, NewsTable, NewsListView, NewsDetail, SavedNewsListView)
+from .views import (SignIn, NewsTable, NewsListView, NewsDetail)
 
 app_name = 'AggregatorApp'
 urlpatterns = [
@@ -19,10 +19,10 @@ urlpatterns = [
     path('test-table-2/tag/<slug:tag_slug>/', views.news_list_table, name='news_list_by_tag'),
 
     path('category/<str:section>/', views.category, name='category'),
-    path('top-news/', views.category_top, name='category-top'),
+    # path('top-news/', views.category_top, name='category-top'),
 
     path('add-tag/<slug:tag_slug>/', views.add_tags, name='add-tag'),
     path('user-feed/', views.user_feed, name='user-feed'),
     path('add-news/<pk>',  views.save_news, name='save-news'),
-    path('saved-news/', SavedNewsListView.as_view(), name='saved-news')
+    path('saved-news/', views.saved_news_list_view, name='saved-news')
 ]

@@ -1,0 +1,16 @@
+{% load static %}
+
+<div class="col-md-4">
+
+    {% if section == 'Top' %}
+        {% include 'AggregatorApp/widgets/cultural-news-widget.html' %}
+        <!-- Cultural News -->
+    {% else %}
+        {% include 'AggregatorApp/widgets/popular-news-widget.html' %}
+        <!-- Popular News -->
+    {% endif %}
+
+    {% include 'AggregatorApp/widgets/latest-news-widget.html' %}
+    <!-- Latest News -->
+
+</div>

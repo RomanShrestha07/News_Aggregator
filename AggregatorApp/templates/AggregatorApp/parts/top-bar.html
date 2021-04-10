@@ -1,0 +1,133 @@
+{% load static %}
+
+<div class="header-section">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="left_section">
+                <span class="date"><span id="day"></span> .</span>
+                <!-- Date -->
+                <span class="time"><span id="date-num"></span> <span id="month-num"></span> . <span
+                        id="year"></span></span>
+                <!-- Time -->
+
+                <div class="social">
+                    <a class="icons-sm fb-ic"><i class="fa fa-facebook"></i></a>
+                    <!--Twitter-->
+                    <a class="icons-sm tw-ic"><i class="fa fa-twitter"></i></a>
+                    <!--Google +-->
+                    <a class="icons-sm inst-ic"><i class="fa fa-instagram"> </i></a>
+                    <!--Linkedin-->
+                    <a class="icons-sm tmb-ic"><i class="fa fa-tumblr"> </i></a>
+                    <!--Pinterest-->
+                    <a class="icons-sm rss-ic"><i class="fa fa-rss"> </i></a>
+                </div>
+
+                <!-- Top Social Section -->
+            </div>
+            <!-- Left Header Section -->
+        </div>
+
+        <div class="col-md-4">
+            <div class="logo">
+                <a href="{% url 'AggregatorApp:index' %}">
+                    <img src="{% static 'assets/img/times_daily_logo_3.png' %}" alt="Times Daily News Logo">
+                </a>
+            </div>
+            <!-- Logo Section -->
+        </div>
+
+        <div class="col-md-4">
+            {% if user.is_authenticated %}
+
+                <div class="right_section">
+
+                    <ul class="nav navbar-nav">
+                        <li><a href="#">User</a></li>
+
+                        <li class="dropdown lang">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="true">{{ user.username|default:'Guest' }}<i
+                                    class="fa fa-angle-down"></i>
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{% url 'AggregatorApp:profile' %}">Profile</a></li>
+                                <li><a href="{% url 'AggregatorApp:saved-news' %}">Saved News</a></li>
+                                <li><a href="#">Blocked Sources</a></li>
+                                <li><a href="{% url 'AggregatorApp:password_change' %}">Change Password</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- User Section -->
+
+                    {#                <ul class="nav-cta hidden-xs">#}
+                    {#                    <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><i#}
+                    {#                            class="fa fa-search"></i></a>#}
+                    {#                        <ul class="dropdown-menu">#}
+                    {#                            <li>#}
+                    {##}
+                    {#                                <div class="head-search">#}
+                    {#                                    <form role="form">#}
+                    {#                                        <!-- Input Group -->#}
+                    {#                                        <div class="input-group">#}
+                    {#                                            <input type="text" class="form-control" placeholder="Type Something">#}
+                    {#                                            <span class="input-group-btn"><button type="submit" class="btn btn-primary">Search</button></span>#}
+                    {#                                        </div>#}
+                    {#                                    </form>#}
+                    {#                                </div>#}
+                    {##}
+                    {#                            </li>#}
+                    {#                        </ul>#}
+                    {#                    </li>#}
+                    {#                </ul>#}
+                    <!-- Search Section -->
+                </div>
+                <!-- Right Header Section -->
+            {% else %}
+
+                <div class="right_section">
+
+                    <ul class="nav navbar-nav">
+                        <li><a href="{% url 'AggregatorApp:sign-in' %}">Sign In</a></li>
+
+                        <li class="dropdown lang">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="true">{{ user.username|default:'Guest' }}
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="{% url 'AggregatorApp:sign-in' %}">Sign In</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- User Section -->
+                </div>
+                <!-- Right Header Section -->
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% include 'AggregatorApp/parts/logout-modal.html' %}
+
+<script>
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var d = new Date();
+    var day = days[d.getDay()];
+    var date = d.getDate();
+    var month = months[d.getMonth()];
+    var year = d.getFullYear();
+    var d1 = document.getElementById("day");
+    var d2 = document.getElementById("date-num");
+    var d3 = document.getElementById("month-num");
+    var d4 = document.getElementById("year");
+    d1.innerHTML = day.toString();
+    d2.innerHTML = date.toString();
+    d3.innerHTML = month.toString();
+    d4.innerHTML = year.toString();
+</script>
