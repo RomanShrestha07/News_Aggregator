@@ -55,7 +55,7 @@
                                 <li><a href="{% url 'AggregatorApp:profile' %}">Profile</a></li>
                                 <li><a href="{% url 'AggregatorApp:saved-news' %}">Saved News</a></li>
                                 <li><a href="#">Blocked Sources</a></li>
-                                <li><a href="{% url 'AggregatorApp:password_change' %}">Change Password</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#passwordChangeModal">Change Password</a></li>
                                 <li><a href="#" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
                             </ul>
                         </li>
@@ -113,6 +113,7 @@
 </div>
 
 {% include 'AggregatorApp/parts/logout-modal.html' %}
+{% include 'AggregatorApp/parts/password-change-modal.html' %}
 
 <script>
     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

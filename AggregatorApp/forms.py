@@ -10,7 +10,12 @@ class UserForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email')
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('birth_date', 'gender', 'bio', 'country')
+        widgets = {'birth_date': DateInput()}

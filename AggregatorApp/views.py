@@ -45,16 +45,22 @@ def update_profile(request):
             user_form.save()
             profile_form.save()
             print('Your profile was successfully updated!')
-            return redirect('AggregatorApp:index')
+            return redirect('AggregatorApp:profile')
         else:
             print('Please correct the error below.')
     else:
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'AggregatorApp/profile.html', {
+    return render(request, 'AggregatorApp/profile-update.html', {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
     })
+
+
+def view_profile(request):
+    profile = Profile.objects.get(user=request.user)
+
+    return render(request, 'AggregatorApp/profile-view.html', {'profile': profile})
 
 
 class SignIn(auth_views.LoginView):
@@ -161,7 +167,7 @@ def news_processing(request):
 
     print("Successful")
 
-    return redirect('AggregatorApp:news-table-1')
+    return redirect('AggregatorApp:index')
 
 
 class NewsTable(ListView):
@@ -196,7 +202,7 @@ def news_list_table(request, tag_slug=None):
 
 class NewsDetail(DetailView):
     model = News
-    template_name = 'AggregatorApp/single.html'
+    template_name = 'AggregatorApp/news-detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(NewsDetail, self).get_context_data(**kwargs)
@@ -288,6 +294,7 @@ def not_in(og_list, new_list, top, row_top, row_bottom, rest):
     return new_list
 
 
+@login_required(login_url='/sign-in/')
 def add_tags(request, tag_slug=None):
     tag = None
     user = request.user
@@ -349,6 +356,7 @@ def user_feed(request):
                   {'object_list': object_list, 'profile': profile, 'popular_news': popular_news})
 
 
+@login_required(login_url='/sign-in/')
 def save_news(request, pk):
     user = request.user
     news = News.objects.get(pk=pk)
@@ -380,4 +388,19 @@ def saved_news_list_view(request):
         if item not in object_list:
             popular_news.append(item)
 
-    return render(request, 'AggregatorApp/saved-news.html', {'object_list': object_list, 'popular_news': popular_news})
+    return render(request, 'AggregatorApp/saved-news.html',
+                  {'object_list': object_list, 'popular_news': popular_news})
+
+
+class SavedNewsDetail(DetailView):
+    model = SavedNews
+    template_name = 'AggregatorApp/saved-news-detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SavedNewsDetail, self).get_context_data(**kwargs)
+
+        popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+        popular_news = News.objects.filter(tags__in=[popular_tag])
+
+        context['popular_news'] = popular_news
+        return context

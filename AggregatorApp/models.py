@@ -101,3 +101,7 @@ class SavedNews(models.Model):
 
     def __str__(self):
         return self.headline
+
+    def get_absolute_url(self):
+        return reverse('AggregatorApp:saved-news-detail',
+                       args=[self.user.id, self.date_time.year, self.date_time.month, self.date_time.day, self.pk])

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
-from .views import (SignIn, NewsTable, NewsListView, NewsDetail)
+from django.contrib.auth.decorators import login_required
+from .views import (SignIn, NewsTable, NewsListView, NewsDetail, SavedNewsDetail)
 
 app_name = 'AggregatorApp'
 urlpatterns = [
@@ -9,7 +10,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('sign-up/', views.signup, name='sign-up'),
     path('sign-in/', SignIn.as_view(), name='sign-in'),
-    path('profile/', views.update_profile, name='profile'),
+    path('profile/update/', views.update_profile, name='update-profile'),
+    path('profile/', views.view_profile, name='profile'),
 
     path('process-news/', views.news_processing, name='process-news'),
     path('news-list/', NewsListView.as_view(), name='news-test'),
@@ -23,6 +25,9 @@ urlpatterns = [
 
     path('add-tag/<slug:tag_slug>/', views.add_tags, name='add-tag'),
     path('user-feed/', views.user_feed, name='user-feed'),
-    path('add-news/<pk>',  views.save_news, name='save-news'),
-    path('saved-news/', views.saved_news_list_view, name='saved-news')
+    path('add-news/<pk>', views.save_news, name='save-news'),
+
+    path('saved-news/', views.saved_news_list_view, name='saved-news'),
+    path('saved-news-detail/<int:id>/<int:year>/<int:month>/<int:day>/<pk>', login_required(SavedNewsDetail.as_view()),
+         name='saved-news-detail'),
 ]

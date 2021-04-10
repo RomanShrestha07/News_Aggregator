@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'AggregatorApp.apps.AggregatorappConfig',
     'widget_tweaks',
     'taggit',
+    'tempus_dominus',
 ]
 
 MIDDLEWARE = [

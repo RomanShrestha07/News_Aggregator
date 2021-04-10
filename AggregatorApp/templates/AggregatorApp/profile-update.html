@@ -1,0 +1,125 @@
+{% extends 'AggregatorApp/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block css-head %}
+    <style>
+        .profile-update {
+            margin: auto;
+            width: 50%;
+        }
+
+        .panel-heading {
+            padding-bottom: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Begin Page Content -->
+    <div class="profile-update container-fluid">
+        <!-- Content Row -->
+        <div class="panel col-lg-12">
+
+            <div class="panel-heading">
+                <h2>
+                    <center>Update Profile</center>
+                </h2>
+            </div>
+
+            <div class="panel-body">
+
+                <form class="user" method="post">
+                    {% csrf_token %}
+
+                    <small class="text-danger">
+                        {{ form.non_field_errors }}
+                    </small>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Username</label>
+                        </div>
+                        <div class="col-9">
+                            <input class="form-control" type="text" placeholder="{{ user.username }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>First Name</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field user_form.first_name class="form-control" placeholder=profile.user.first_name %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Last Name</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field user_form.last_name class="form-control" placeholder=profile.user.last_name %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Email</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field user_form.email class="form-control" placeholder=profile.user.email %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Date of Birth</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field profile_form.birth_date class="form-control" placeholder='' %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Gender</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field profile_form.gender class="form-control" placeholder=rofile.gender %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Country</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field profile_form.country class="form-control" placeholder=profile.country %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-3">
+                            <label>Bio</label>
+                        </div>
+                        <div class="col-9">
+                            {% render_field profile_form.bio class="form-control" placeholder=profile.bio %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-default" type="submit">Save changes</button>
+                        <a href="{% url 'AggregatorApp:index' %}" class="btn">Cancel</a>
+                    </div>
+
+
+                </form>
+
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+{% endblock %}
