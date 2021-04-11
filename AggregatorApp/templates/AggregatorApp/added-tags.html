@@ -1,0 +1,60 @@
+{% extends 'AggregatorApp/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Added Tags{% endblock %}
+
+{% block css-head %}
+    <style>
+        .added-tags {
+            margin: auto;
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Begin Page Content -->
+    <div class="added-tags container-fluid">
+        <!-- Content Row -->
+        <div class="panel col-lg-12">
+
+            <div class="panel-heading">
+                <h2>
+                    <center>Added Tags</center>
+                </h2>
+            </div>
+
+            <div class="panel-body">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Tag</th>
+                        <th scope="col">Tag Slug</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+
+                    {% for tag in tag_list %}
+                        <tbody>
+                        <tr>
+                            <td>{{ tag.name }}</td>
+                            <td>{{ tag.slug }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{% url 'AggregatorApp:news_list_by_tag' tag.slug %}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a class="btn btn-danger" href="{% url 'AggregatorApp:remove-tag' tag.slug %}">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    {% endfor %}
+
+                </table>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'AggregatorApp/base.html' %}
 {% load static %}
 
-{% block title %}{{ section }}{% endblock %}
+{% block title %}{{ st }}{% endblock %}
 
 {% block content %}
 
@@ -11,14 +11,16 @@
                 <div class="entity_wrapper">
 
                     <div class="entity_title header_purple">
-                        <h1><a href="category.html" target="_blank">{{ section }}</a></h1>
+                        <h1><a href="{% url 'AggregatorApp:category' section %}" target="_blank">{{ st }}</a></h1>
                     </div>
                     <!-- entity_title -->
 
                     {% if top %}
                         {% for news in top %}
                             <div class="entity_thumb">
-                                <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                                <a href="{{ news.get_absolute_url }}">
+                                    <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
+                                </a>
                             </div>
                             <!-- entity_thumb -->
 
@@ -28,8 +30,8 @@
                             <!-- entity_title -->
 
                             <div class="article_date">
-                                Source: <a href="#"> {{ news.source }}</a>&nbsp
-                                Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                                Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
+                                Date: <a href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
                                 Author: <a href="#"> {{ news.author }}</a>
                             </div>
                             <!-- entity_meta -->
@@ -56,19 +58,20 @@
                             <div class="category_article_body">
 
                                 <div class="top_article_img">
-                                    <a href="single.html" target="_self">
+                                    <a href="{{ news.get_absolute_url }}" target="_self">
                                         <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
                                     </a>
                                 </div>
                                 <!-- top_article_img -->
 
                                 <div class="category_article_title">
-                                    <h5><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a></h5>
+                                    <h5><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a>
+                                    </h5>
                                 </div>
                                 <!-- category_article_title -->
 
                                 <div class="article_date">
-                                    Source: <a href="#"> {{ news.source }}</a>&nbsp
+                                    Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
                                     Date: <a href="#"> {{ news.date_time }}</a>&nbsp
                                     Author: <a href="#"> {{ news.author }}</a>
                                 </div>
@@ -94,19 +97,20 @@
                             <div class="category_article_body">
 
                                 <div class="top_article_img">
-                                    <a href="single.html" target="_self">
+                                    <a href="{{ news.get_absolute_url }}" target="_self">
                                         <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
                                     </a>
                                 </div>
                                 <!-- top_article_img -->
 
                                 <div class="category_article_title">
-                                    <h5><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a></h5>
+                                    <h5><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a>
+                                    </h5>
                                 </div>
                                 <!-- category_article_title -->
 
                                 <div class="article_date">
-                                    Source: <a href="#"> {{ news.source }}</a>&nbsp
+                                    Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
                                     Date: <a href="#"> {{ news.date_time }}</a>&nbsp
                                     Author: <a href="#"> {{ news.author }}</a>
                                 </div>
@@ -131,7 +135,7 @@
                                 <div class="col-md-5">
 
                                     <div class="top_article_img">
-                                        <a href="single.html" target="_self">
+                                        <a href="{{ news.get_absolute_url }}" target="_self">
                                             <img class="img-responsive" src="{{ news.image }}" alt="feature-top">
                                         </a>
                                     </div>
@@ -142,13 +146,14 @@
                                     <span class="tag orange">{{ news.section }}</span>
 
                                     <div class="category_article_title">
-                                        <h2><a href="{{ news.get_absolute_url }}" target="_self">{{ news.headline }}</a></h2>
+                                        <h2><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a>
+                                        </h2>
                                     </div>
                                     <!-- category_article_title -->
 
                                     <div class="article_date">
-                                        Source: <a href="#"> {{ news.source }}</a>&nbsp
-                                        Date: <a href="#"> {{ news.date_time }}</a>&nbsp
+                                        Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
+                                        Date: <a href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
                                         Author: <a href="#"> {{ news.author }}</a>
                                     </div>
                                     <!----article_date------>

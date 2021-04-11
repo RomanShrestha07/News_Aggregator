@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block title %}
-    {% if tag %}
-        {{ tag.name }}
-    {% else %}
-        Saved News
+    {% if source %}
+        {{ source }}
+    {% elif date %}
+        {{ date }}
     {% endif %}
 {% endblock %}
 
@@ -16,10 +16,10 @@
                 <div class="entity_wrapper">
 
                     <div class="entity_title header_purple">
-                        {% if tag %}
-                            <h1>News tagged with "{{ tag.name }}"</h1>
-                        {% else %}
-                            <h1><a href="{% url 'AggregatorApp:saved-news' %}" target="_blank">Saved News</a></h1>
+                        {% if source %}
+                            <h1><a href="category.html" target="_blank">News from "{{ source }}"</a></h1>
+                        {% elif date %}
+                            <h1><a href="category.html" target="_blank">News from "{{ date }}"</a></h1>
                         {% endif %}
                     </div>
                     <!-- entity_title -->
@@ -46,12 +46,12 @@
                                         <span class="tag orange">{{ news.section }}</span>
 
                                         <div class="category_article_title">
-                                            <h2><a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a></h2>
+                                            <h2><a href="{{ news.get_absolute_url }}" target="_self">{{ news.headline }}</a></h2>
                                         </div>
                                         <!-- category_article_title -->
 
                                         <div class="article_date">
-                                            Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
+                                            Source: <a href="#"> {{ news.source }}</a>&nbsp
                                             Date: <a href="#"> {{ news.date_time }}</a>&nbsp
                                             Author: <a href="#"> {{ news.author }}</a>
                                         </div>

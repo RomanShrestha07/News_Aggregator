@@ -25,13 +25,23 @@
 
                         <div class="entity_title">
                             <h1>{{ news.headline }}</h1>
+                            <a href="{% url 'AggregatorApp:save-news' news.pk %}" class="btn btn-default">Save</a>
                         </div>
                         <!-- entity_title -->
 
                         <div class="entity_meta">
-                            Source: <a href="#"> {{ news.source }}</a>&nbsp
+                            Source: <a
+                                href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
                             Date: <a href="#"> {{ news.date_time }}</a>&nbsp
-                            Author: <a href="#"> {{ news.author }}</a>
+                            Author: <a href="#"> {{ news.author }}</a>&nbsp
+
+                            {% if news.section == 'Science and Technology' %}
+                                Section:
+                                <a href="{% url 'AggregatorApp:category' 'science-technology' %}"> {{ news.section }}</a>
+                            {% else %}
+                                Section:
+                                <a href="{% url 'AggregatorApp:category' news.section.lower %}"> {{ news.section }}</a>
+                            {% endif %}
                         </div>
                         <!-- entity_meta -->
 
@@ -52,20 +62,28 @@
 
                         <div class="entity_footer">
                             <div class="entity_tag">
-                                {% for tag in news.tags.all %}
-                                    <span class="tag">
-                                        <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
-                                            {{ tag.name }}
-                                        </a>
-                                    </span>
-                                {% endfor %}
+                                <div class="dropdown">
+                                    {% for tag in news.tags.all %}
+
+                                        <span class="tag">
+                                            <a href="{% url 'AggregatorApp:news_list_by_tag' tag.slug %}">
+                                                {{ tag.name }}
+                                            </a>&nbsp
+                                            <a href="{% url 'AggregatorApp:add-tag' tag.slug %}">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </span>
+
+                                    {% endfor %}
+                                </div>
                             </div>
                             <!-- entity_tag -->
                         </div>
                         <!-- entity_footer -->
                     </div>
                     <!-- entity_wrapper -->
-                    <br/><hr>
+                    <br/>
+                    <hr>
 
                     <div class="related_news">
                         <div class="entity_inner__title header_purple">

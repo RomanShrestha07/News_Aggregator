@@ -25,13 +25,22 @@
 
                         <div class="entity_title">
                             <h1>{{ savednews.headline }}</h1>
+                            <a href="#" data-toggle="modal" data-target="#deleteConformationModal" class="btn btn-danger">Delete</a>
                         </div>
                         <!-- entity_title -->
 
                         <div class="entity_meta">
-                            Source: <a href="#"> {{ savednews.source }}</a>&nbsp
+                            Source: <a href="{% url 'AggregatorApp:news-by-source' savednews.source %}"> {{ savednews.source }}</a>&nbsp
                             Date: <a href="#"> {{ savednews.date_time }}</a>&nbsp
-                            Author: <a href="#"> {{ savednews.author }}</a>
+                            Author: <a href="#"> {{ savednews.author }}</a>&nbsp;
+
+                            {% if news.section == 'Science and Technology' %}
+                                Section:
+                                <a href="{% url 'AggregatorApp:category' 'science-technology' %}"> {{ savednews.section }}</a>
+                            {% else %}
+                                Section:
+                                <a href="{% url 'AggregatorApp:category' savednews.section.lower %}"> {{ savednews.section }}</a>
+                            {% endif %}
                         </div>
                         <!-- entity_meta -->
 
@@ -52,13 +61,20 @@
 
                         <div class="entity_footer">
                             <div class="entity_tag">
-                                {% for tag in savednews.tags.all %}
-                                    <span class="tag">
-                                        <a href="{% url "AggregatorApp:news_list_by_tag" tag.slug %}">
-                                            {{ tag.name }}
-                                        </a>
-                                    </span>
-                                {% endfor %}
+                                <div class="dropdown">
+                                    {% for tag in savednews.tags.all %}
+
+                                        <span class="tag">
+                                            <a href="{% url 'AggregatorApp:news_list_by_tag' tag.slug %}">
+                                                {{ tag.name }}
+                                            </a>&nbsp
+                                            <a href="{% url 'AggregatorApp:add-tag' tag.slug %}">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </span>
+
+                                    {% endfor %}
+                                </div>
                             </div>
                             <!-- entity_tag -->
                         </div>
@@ -176,4 +192,5 @@
 
     </section>
     <!-- Entity Section Wrapper -->
+    {% include 'AggregatorApp/parts/delete-conformation-modal.html' %}
 {% endblock %}

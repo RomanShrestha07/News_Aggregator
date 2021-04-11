@@ -2,7 +2,7 @@
 
 <div class="col-md-4">
 
-    {% if section == 'Top' %}
+    {% if section == 'top' or source == 'AP News' %}
         {% include 'AggregatorApp/widgets/cultural-news-widget.html' %}
         <!-- Cultural News -->
     {% else %}
@@ -10,7 +10,11 @@
         <!-- Popular News -->
     {% endif %}
 
-    {% include 'AggregatorApp/widgets/latest-news-widget.html' %}
-    <!-- Latest News -->
-
+    {% if section == 'opinion' %}
+        {% include 'AggregatorApp/widgets/other-news-widget.html' %}
+        <!-- Other News -->
+    {% else %}
+        {% include 'AggregatorApp/widgets/opinion-news-widget.html' %}
+        <!-- Opinion News -->
+    {% endif %}
 </div>
