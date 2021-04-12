@@ -2,10 +2,10 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 # from .forms import UserRegistrationForm
-from .models import RawNews, Profile, News, BlockedSources, SavedNews
+from .models import RawNews, Profile, News, BlockedSources, SavedNews, Comment
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import UserForm, ProfileForm
+from .forms import UserForm, ProfileForm, CommentForm
 from django.contrib.auth import views as auth_views
 from django.views.generic import ListView, DetailView, DeleteView
 from taggit.models import Tag, TaggedItem
@@ -157,6 +157,9 @@ def news_processing(request):
 
         news2.save()
 
+        if n.headline in processed_news.headline:
+            print(news.headline)
+
         for t in n.tags:
             try:
                 news2.tags.add(t.lower())
@@ -170,6 +173,42 @@ def news_processing(request):
     return redirect('AggregatorApp:index')
 
 
+def sidebar_news(object_list):
+    popular_news_list = []
+    opinion_news_list = []
+    cultural_news_list = []
+    other_news_list = []
+
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pop = News.objects.filter(tags__in=[popular_tag])
+    opi = News.objects.filter(section='Opinion')
+    cul = News.objects.filter(section='Culture')
+    oth = News.objects.filter(section='Other')
+
+    for item in pop:
+        if item not in object_list:
+            popular_news_list.append(item)
+
+    for item in opi:
+        if item not in object_list:
+            opinion_news_list.append(item)
+
+    for item in cul:
+        if item not in object_list:
+            cultural_news_list.append(item)
+
+    for item in oth:
+        if item not in object_list:
+            other_news_list.append(item)
+
+    popular_news = list(set(popular_news_list))
+    opinion_news = list(set(opinion_news_list))
+    cultural_news = list(set(cultural_news_list))
+    other_news = list(set(other_news_list))
+
+    return popular_news, opinion_news, cultural_news, other_news
+
+
 def news_by_tag(request, tag_slug=None):
     object_list = News.objects.all()
     tag = None
@@ -178,21 +217,9 @@ def news_by_tag(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         object_list = object_list.filter(tags__in=[tag])
 
-    pn = []
-    opinion_news = []
-    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
-    pop = News.objects.filter(tags__in=[popular_tag])
-    opi = News.objects.filter(section='Opinion')
-
-    for item in pop:
-        if item not in object_list:
-            pn.append(item)
-
-    for item in opi:
-        if item not in object_list:
-            opinion_news.append(item)
-
-    popular_news = set(pn)
+    side_news = sidebar_news(object_list)
+    popular_news = side_news[0]
+    opinion_news = side_news[1]
 
     return render(request, 'AggregatorApp/saved-news.html',
                   {'object_list': object_list, 'tag': tag, 'popular_news': popular_news, 'opinion_news': opinion_news})
@@ -202,32 +229,41 @@ def news_by_source(request, source):
     object_list = News.objects.filter(source__in=[source])
     s = source
 
-    cultural_news = []
-    opinion_news = []
-    cul = News.objects.filter(section='Culture')
-    opi = News.objects.filter(section='Opinion')
-
-    for item in cul:
-        if item not in object_list:
-            cultural_news.append(item)
-
-    for item in opi:
-        if item not in object_list:
-            opinion_news.append(item)
+    side_news = sidebar_news(object_list)
+    popular_news = side_news[0]
+    opinion_news = side_news[1]
+    cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/source-news.html',
-                  {'object_list': object_list, 'source': s, 'cultural_news': cultural_news, 'opinion_news': opinion_news})
+                  {'object_list': object_list, 'source': s, 'cultural_news': cultural_news,
+                   'opinion_news': opinion_news, 'popular_news': popular_news})
 
 
 def news_by_date(request, date):
-    # date_str = date
-    # d = parse_date(date_str)
-    year = date[0:4]
-    month = date[5:7]
-    day = date[8:10]
-    object_list = News.objects.filter(date_time__year='2021', date_time__month='04')
+    date_str = date
+    d = parse_date(date_str)
+    ol = News.objects.all().filter(date_time=d)
+    object_list = set(ol)
 
-    return render(request, 'AggregatorApp/source-news.html', {'object_list': object_list, 'date': date})
+    side_news = sidebar_news(object_list)
+    popular_news = side_news[0]
+    opinion_news = side_news[1]
+
+    return render(request, 'AggregatorApp/source-news.html',
+                  {'object_list': object_list, 'date': d, 'popular_news': popular_news, 'opinion_news': opinion_news})
+
+
+def news_by_author(request, author):
+    ol = News.objects.all().filter(author=author)
+    object_list = set(ol)
+
+    side_news = sidebar_news(object_list)
+    popular_news = side_news[0]
+    opinion_news = side_news[1]
+
+    return render(request, 'AggregatorApp/source-news.html',
+                  {'object_list': object_list, 'author': author, 'popular_news': popular_news,
+                   'opinion_news': opinion_news})
 
 
 class NewsDetail(DetailView):
@@ -240,6 +276,16 @@ class NewsDetail(DetailView):
         popular_tag = get_object_or_404(Tag, slug='ap-top-news')
         pn = News.objects.filter(tags__in=[popular_tag])
         on = News.objects.filter(section='Opinion')
+        saved = []
+
+        if self.request.user:
+            try:
+                sn = SavedNews.objects.filter(user=self.request.user)
+
+                for s in sn:
+                    saved.append(s.url)
+            except:
+                print('Invalid User.')
 
         popular_news = set(pn)
         opinion_news = set(on)
@@ -252,6 +298,7 @@ class NewsDetail(DetailView):
 
         context['popular_news'] = popular_news
         context['opinion_news'] = opinion_news
+        context['saved'] = saved
         return context
 
 
@@ -421,21 +468,9 @@ def user_feed(request):
     else:
         print('No tags selected. -- 2')
 
-    # popular_news = []
-    pn = []
-    opinion_news = []
-    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
-    pop = News.objects.filter(tags__in=[popular_tag])
-    opi = News.objects.filter(section='Opinion')
-
-    for item in pop:
-        if item not in object_list:
-            pn.append(item)
-    for item in opi:
-        if item not in object_list:
-            opinion_news.append(item)
-
-    popular_news = set(pn)
+    side_news = sidebar_news(object_list)
+    popular_news = side_news[0]
+    opinion_news = side_news[1]
 
     return render(request, 'AggregatorApp/user-feed.html',
                   {'object_list': object_list, 'profile': profile, 'popular_news': popular_news,
@@ -466,20 +501,9 @@ def save_news(request, pk):
 def saved_news_list_view(request):
     object_list = SavedNews.objects.filter(user=request.user)
 
-    pn = []
-    opinion_news = []
-    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
-    pop = News.objects.filter(tags__in=[popular_tag])
-    opi = News.objects.filter(section='Opinion')
-
-    for item in pop:
-        if item not in object_list:
-            pn.append(item)
-    for item in opi:
-        if item not in object_list:
-            opinion_news.append(item)
-
-    popular_news = set(pn)
+    side_news = sidebar_news(object_list)
+    popular_news = side_news[0]
+    opinion_news = side_news[1]
 
     return render(request, 'AggregatorApp/saved-news.html',
                   {'object_list': object_list, 'popular_news': popular_news, 'opinion_news': opinion_news})
@@ -503,3 +527,54 @@ def saved_news_delete(request, pk):
     sd = SavedNews.objects.get(pk=pk)
     sd.delete()
     return redirect('AggregatorApp:saved-news')
+
+
+def news_detail(request, year, month, day, news_id, pk):
+    date_str = str(year) + '-' + str(month) + '-' + str(day)
+    d = parse_date(date_str)
+    news = get_object_or_404(News, pk=pk, news_id=news_id, date_time=d)
+
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pn = News.objects.filter(tags__in=[popular_tag])
+    on = News.objects.filter(section='Opinion')
+    saved = []
+
+    if request.user:
+        try:
+            sn = SavedNews.objects.filter(user=request.user)
+
+            for s in sn:
+                saved.append(s.url)
+        except:
+            print('Invalid User.')
+
+    popular_news = set(pn)
+    opinion_news = set(on)
+
+    if news in popular_news:
+        popular_news.discard(news)
+    if news in opinion_news:
+        opinion_news.discard(news)
+
+    # List of active comments for this post
+    comments = news.comments.filter(active=True)
+
+    new_comment = None
+
+    if request.method == 'POST':
+        # A comment was posted
+        comment_form = CommentForm(data=request.POST)
+
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current post to the comment
+            new_comment.user = request.user
+            new_comment.news = news
+            # Save the comment to the database
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+    return render(request, 'AggregatorApp/news-detail.html',
+                  {'news': news, 'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form,
+                   'popular_news': popular_news, 'opinion_news': opinion_news, 'saved': saved})

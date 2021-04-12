@@ -76,7 +76,7 @@ class News(models.Model):
     tags = TaggableManager()
     section = models.CharField(max_length=100, null=True, blank=True)
     image = models.CharField(max_length=255, null=True, blank=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.headline
@@ -97,7 +97,7 @@ class SavedNews(models.Model):
     tags = TaggableManager()
     section = models.CharField(max_length=100, null=True, blank=True)
     image = models.CharField(max_length=255, null=True, blank=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.headline
@@ -105,3 +105,18 @@ class SavedNews(models.Model):
     def get_absolute_url(self):
         return reverse('AggregatorApp:saved-news-detail',
                        args=[self.user.id, self.date_time.year, self.date_time.month, self.date_time.day, self.pk])
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='comments')
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.news.headline}'

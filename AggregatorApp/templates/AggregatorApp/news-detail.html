@@ -1,4 +1,6 @@
 {% extends 'AggregatorApp/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
 {% block css-head %}
     <style>
@@ -8,6 +10,10 @@
 
         .tag {
             margin-top: 5px;
+        }
+
+        .entity_inner__title::after {
+            bottom: 22px;
         }
     </style>
 {% endblock %}
@@ -25,15 +31,22 @@
 
                         <div class="entity_title">
                             <h1>{{ news.headline }}</h1>
-                            <a href="{% url 'AggregatorApp:save-news' news.pk %}" class="btn btn-default">Save</a>
+
+                            {% if news.url in saved %}
+                                <a href="{% url 'AggregatorApp:saved-news' %}" class="btn btn-default">Saved</a>
+                            {% else %}
+                                <a href="{% url 'AggregatorApp:save-news' news.pk %}" class="btn btn-default">Save</a>
+                            {% endif %}
                         </div>
                         <!-- entity_title -->
 
                         <div class="entity_meta">
                             Source: <a
                                 href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
-                            Date: <a href="#"> {{ news.date_time }}</a>&nbsp
-                            Author: <a href="#"> {{ news.author }}</a>&nbsp
+                            Date: <a
+                                href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
+                            Author: <a
+                                href="{% url 'AggregatorApp:news-by-author' news.author %}"> {{ news.author }}</a>&nbsp
 
                             {% if news.section == 'Science and Technology' %}
                                 Section:
@@ -64,16 +77,16 @@
                             <div class="entity_tag">
                                 <div class="dropdown">
                                     {% for tag in news.tags.all %}
-
-                                        <span class="tag">
-                                            <a href="{% url 'AggregatorApp:news_list_by_tag' tag.slug %}">
-                                                {{ tag.name }}
-                                            </a>&nbsp
-                                            <a href="{% url 'AggregatorApp:add-tag' tag.slug %}">
-                                                <i class="fa fa-plus"></i>
-                                            </a>
+                                        {% if tag.name != '-' %}
+                                            <span class="tag">
+                                                <a href="{% url 'AggregatorApp:news_list_by_tag' tag.slug %}">
+                                                    {{ tag.name }}
+                                                </a>&nbsp
+                                                <a href="{% url 'AggregatorApp:add-tag' tag.slug %}">
+                                                    <i class="fa fa-plus"></i>
+                                                </a>
                                         </span>
-
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -182,6 +195,75 @@
                         </div>
                     </div>
                     <!-- Related news -->
+
+                    <hr>
+
+                    <div class="readers_comment">
+                        <div class="entity_inner__title header_purple">
+                            <h2>Readers Comment</h2>
+                        </div>
+                        <!-- entity_title -->
+
+                        {% with comments.count as total_comments %}
+                            <h2>
+                                {{ total_comments }} comment{{ total_comments|pluralize }}
+                            </h2>
+                        {% endwith %}
+
+                        {% for comment in comments %}
+                            <div class="media">
+                                <div class="media-body">
+                                    <h2 class="media-heading" style="display: inline-block; margin-right: 10px;">
+                                        {{ comment.user }}
+                                    </h2>
+                                    <h6 style="display: inline-block; font-size: x-small; color: #7d7d7d;">
+                                        {{ comment.created }}
+                                    </h6>
+                                    <p style="font-size: medium">{{ comment.body|linebreaks }}</p>
+                                </div>
+                            </div>
+                            <!-- media end -->
+                        {% empty %}
+                            <hr>
+                            <h6>There are no comments yet.</h6>
+                            <hr>
+                        {% endfor %}
+                    </div>
+                    <!--Readers Comment-->
+
+                    <div class="entity_comments">
+                        <div class="entity_inner__title header_black">
+                            <h2>Add a Comment</h2>
+                        </div>
+                        <!--Entity Title -->
+
+                        {% if user.is_authenticated %}
+
+                            {% if new_comment %}
+                                <h2>Your comment has been added.</h2>
+                            {% else %}
+                                <div class="entity_comment_from">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="inputName"
+                                                   placeholder="{{ request.user }}" readonly>
+                                        </div>
+
+                                        <div class="form-group comment">
+                                            {% render_field comment_form.body class="form-control form-control-user" placeholder="Comment" %}
+                                        </div>
+
+                                        <button type="submit" class="btn btn-submit red">Add Comment</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <h2>Please login to comment.</h2>
+                        {% endif %}
+                        <!--Entity Comments From -->
+                    </div>
+                    <!--Entity Comments -->
                 </div>
                 <!--Left Section-->
 

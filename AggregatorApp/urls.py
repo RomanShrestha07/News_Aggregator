@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from .views import (SignIn, NewsDetail, SavedNewsDetail)
 
@@ -8,18 +9,27 @@ urlpatterns = [
     path('', views.index, name='index'),
 
     path('accounts/', include('django.contrib.auth.urls')),
+    path('change-password/', auth_views.PasswordChangeView.as_view(
+            template_name='AggregatorApp/change-password.html',
+            success_url='/'
+        ),
+        name='change_password'
+    ),
+
     path('sign-up/', views.signup, name='sign-up'),
     path('sign-in/', SignIn.as_view(), name='sign-in'),
     path('profile/', views.view_profile, name='profile'),
     path('profile/update/', views.update_profile, name='update-profile'),
 
     path('process-news/', views.news_processing, name='process-news'),
-    path('news-detail/<int:year>/<int:month>/<int:day>/<news_id>/<pk>', NewsDetail.as_view(), name='news-detail'),
+    # path('news-detail/<int:year>/<int:month>/<int:day>/<news_id>/<pk>', NewsDetail.as_view(), name='news-detail'),
+    path('<int:year>/<int:month>/<int:day>/<news_id>/<pk>', views.news_detail, name='news-detail'),
 
     path('category/<str:section>/', views.category, name='category'),
     path('source/<str:source>/', views.news_by_source, name='news-by-source'),
     path('tag/<slug:tag_slug>/', views.news_by_tag, name='news_list_by_tag'),
     path('date/<str:date>/', views.news_by_date, name='news-by-date'),
+    path('author/<str:author>/', views.news_by_author, name='news-by-author'),
 
     path('add-tag/<slug:tag_slug>/', views.add_tags, name='add-tag'),
     path('view-tags/', views.added_tags_list, name='added-tags-list'),

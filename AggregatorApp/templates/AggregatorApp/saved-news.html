@@ -52,8 +52,8 @@
 
                                         <div class="article_date">
                                             Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
-                                            Date: <a href="#"> {{ news.date_time }}</a>&nbsp
-                                            Author: <a href="#"> {{ news.author }}</a>
+                                            Date: <a href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
+                                            Author: <a href="{% url 'AggregatorApp:news-by-author' news.author %}"> {{ news.author }}</a>
                                         </div>
                                         <!----article_date------>
                                         <!-- category_article_wrapper -->

@@ -17,9 +17,11 @@
 
                     <div class="entity_title header_purple">
                         {% if source %}
-                            <h1><a href="category.html" target="_blank">News from "{{ source }}"</a></h1>
+                            <h1>News from "{{ source }}"</h1>
                         {% elif date %}
-                            <h1><a href="category.html" target="_blank">News from "{{ date }}"</a></h1>
+                            <h1>News from "{{ date }}"</h1>
+                        {% elif author %}
+                            <h1>News from "{{ author }}"</h1>
                         {% endif %}
                     </div>
                     <!-- entity_title -->
@@ -46,14 +48,15 @@
                                         <span class="tag orange">{{ news.section }}</span>
 
                                         <div class="category_article_title">
-                                            <h2><a href="{{ news.get_absolute_url }}" target="_self">{{ news.headline }}</a></h2>
+                                            <h2><a href="{{ news.get_absolute_url }}"
+                                                   target="_self">{{ news.headline }}</a></h2>
                                         </div>
                                         <!-- category_article_title -->
 
                                         <div class="article_date">
-                                            Source: <a href="#"> {{ news.source }}</a>&nbsp
-                                            Date: <a href="#"> {{ news.date_time }}</a>&nbsp
-                                            Author: <a href="#"> {{ news.author }}</a>
+                                            Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
+                                            Date: <a href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
+                                            Author: <a href="{% url 'AggregatorApp:news-by-author' news.author %}"> {{ news.author }}</a>
                                         </div>
                                         <!----article_date------>
                                         <!-- category_article_wrapper -->

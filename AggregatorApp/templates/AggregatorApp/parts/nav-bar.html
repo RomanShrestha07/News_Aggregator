@@ -18,9 +18,9 @@
             <div class="collapse navbar-collapse" id="#navbar-collapse-1">
                 <ul class="nav navbar-nav main-nav" style="margin: 0px;">
 
-                    <li class="active"><a href="{% url 'AggregatorApp:index' %}">Home</a></li>
-                    <li><a href="{% url 'AggregatorApp:user-feed' %}">User Feed</a></li>
-                    <li><a href="{% url 'AggregatorApp:category' 'top' %}">Top News</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}"><a href="{% url 'AggregatorApp:index' %}">Home</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'user-feed' %}active{% endif %}"><a href="{% url 'AggregatorApp:user-feed' %}">User Feed</a></li>
+                    <li ><a href="{% url 'AggregatorApp:category' 'top' %}">Top News</a></li>
                     <li><a href="{% url 'AggregatorApp:category' 'world' %}">World</a></li>
                     <li><a href="{% url 'AggregatorApp:category' 'sports' %}">Sports</a></li>
                     <li><a href="{% url 'AggregatorApp:category' 'politics' %}">Politics</a></li>
