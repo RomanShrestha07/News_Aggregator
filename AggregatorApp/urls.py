@@ -10,11 +10,11 @@ urlpatterns = [
 
     path('accounts/', include('django.contrib.auth.urls')),
     path('change-password/', auth_views.PasswordChangeView.as_view(
-            template_name='AggregatorApp/change-password.html',
-            success_url='/'
-        ),
-        name='change_password'
+        template_name='AggregatorApp/change-password.html',
+        success_url='/'
     ),
+         name='change_password'
+         ),
 
     path('sign-up/', views.signup, name='sign-up'),
     path('sign-in/', SignIn.as_view(), name='sign-in'),
@@ -41,4 +41,8 @@ urlpatterns = [
     path('saved-news-detail/<int:id>/<int:year>/<int:month>/<int:day>/<pk>', login_required(SavedNewsDetail.as_view()),
          name='saved-news-detail'),
     path('saved-news-delete/<pk>', views.saved_news_delete, name='saved-news-delete'),
+
+    path('block-source/<str:source>', views.block_source, name='block-source'),
+    path('blocked-sources/', views.blocked_sources_list, name='blocked-sources-list'),
+    path('unblock-source/<pk>', views.unblock_source, name='unblock-source'),
 ]

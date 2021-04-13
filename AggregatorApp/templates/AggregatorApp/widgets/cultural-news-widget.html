@@ -5,29 +5,34 @@
         <h2><a href="{% url 'AggregatorApp:category' 'culture' %}">Cultural News</a></h2>
     </div>
 
-    {% for news in cultural_news %}
-        {% if forloop.counter < 5 %}
-            <div class="media">
-                <div class="top_article_img">
-                    <a href="{{ news.get_absolute_url }}" target="_self">
-                        <img class="img-responsive media-object"
-                             src="{{ news.image }}"
-                             alt="Generic placeholder image">
-                    </a>
-                </div>
-                <div class="media-body">
-                    <h3 class="media-heading">
-                        <a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a>
-                    </h3>
-                    <span class="media-date">
+    {% if cultural_news %}
+        {% for news in cultural_news %}
+            {% if forloop.counter < 5 %}
+                <div class="media">
+                    <div class="top_article_img">
+                        <a href="{{ news.get_absolute_url }}" target="_self">
+                            <img class="img-responsive media-object"
+                                 src="{{ news.image }}"
+                                 alt="Generic placeholder image">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">
+                            <a href="{{ news.get_absolute_url }}" target="_blank">{{ news.headline }}</a>
+                        </h3>
+                        <span class="media-date">
                         Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
                         Date: <a href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
                         Author: <a href="{% url 'AggregatorApp:news-by-author' news.author %}"> {{ news.author }}</a>
                     </span>
+                    </div>
                 </div>
-            </div>
-        {% endif %}
-    {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <h2>No news.</h2>
+    {% endif %}
 
-    <p class="widget_divider"><a href="{% url 'AggregatorApp:category' 'culture' %}" target="_self">More News&nbsp;&raquo;</a></p>
+    <p class="widget_divider"><a href="{% url 'AggregatorApp:category' 'culture' %}" target="_self">More News&nbsp;&raquo;</a>
+    </p>
 </div>

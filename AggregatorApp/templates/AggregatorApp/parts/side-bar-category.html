@@ -6,8 +6,18 @@
         {% include 'AggregatorApp/widgets/cultural-news-widget.html' %}
         <!-- Cultural News -->
     {% else %}
-        {% include 'AggregatorApp/widgets/popular-news-widget.html' %}
-        <!-- Popular News -->
+        {% if popular_news %}
+            {% include 'AggregatorApp/widgets/popular-news-widget.html' %}
+            <!-- Popular News -->
+        {% else %}
+            {% if section == 'culture' %}
+                {% include 'AggregatorApp/widgets/other-news-widget.html' %}
+                <!-- Other News -->
+            {% else %}
+                {% include 'AggregatorApp/widgets/cultural-news-widget.html' %}
+                <!-- Cultural News -->
+            {% endif %}
+        {% endif %}
     {% endif %}
 
     {% if section == 'opinion' %}

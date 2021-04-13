@@ -1,0 +1,80 @@
+{% extends 'AggregatorApp/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Blocked Sources{% endblock %}
+
+{% block css-head %}
+    <style>
+        .blocked-sources {
+            margin: auto;
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Begin Page Content -->
+    <div class="blocked-sources container-fluid" style="width: 80%">
+        <!-- Content Row -->
+        <div class="panel col-lg-12">
+
+            <div class="panel-heading">
+                <h2>
+                    <center>Sources</center>
+                </h2>
+            </div>
+
+            <div class="panel-body">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Source</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+
+                    {% for source in sources %}
+                        {% if blocked_sources %}
+                            <tbody>
+                            <tr>
+                                <td>{{ source }}</td>
+                                <td>
+                                    {% for bs in blocked_sources %}
+                                        {% if bs.source_name == source %}
+                                            <a class="btn btn-primary"
+                                               href="{% url 'AggregatorApp:unblock-source' bs.pk %}">
+                                                Unblock <i class="fa fa-hand-o-right"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if source not in bs_names %}
+                                        <a class="btn btn-danger"
+                                           href="{% url 'AggregatorApp:block-source' source %}">
+                                            Block <i class="fa fa-hand-paper-o"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            </tbody>
+                        {% else %}
+                            <tbody>
+                            <tr>
+                                <td>{{ source }}</td>
+                                <td>
+                                    <a class="btn btn-danger"
+                                       href="{% url 'AggregatorApp:block-source' source %}">
+                                        Block <i class="fa fa-hand-paper-o"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        {% endif %}
+                    {% endfor %}
+
+                </table>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+{% endblock %}

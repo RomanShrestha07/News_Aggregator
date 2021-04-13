@@ -173,7 +173,7 @@ def news_processing(request):
     return redirect('AggregatorApp:index')
 
 
-def sidebar_news(object_list):
+def sidebar_news(object_list, user):
     popular_news_list = []
     opinion_news_list = []
     cultural_news_list = []
@@ -185,20 +185,30 @@ def sidebar_news(object_list):
     cul = News.objects.filter(section='Culture')
     oth = News.objects.filter(section='Other')
 
+    blocked_sources = []
+    blocked_all = []
+    try:
+        blocked_all = BlockedSources.objects.filter(user=user)
+    except:
+        print('Invalid user')
+
+    for b in blocked_all:
+        blocked_sources.append(b.source_name)
+
     for item in pop:
-        if item not in object_list:
+        if item not in object_list and item.source not in blocked_sources:
             popular_news_list.append(item)
 
     for item in opi:
-        if item not in object_list:
+        if item not in object_list and item.source not in blocked_sources:
             opinion_news_list.append(item)
 
     for item in cul:
-        if item not in object_list:
+        if item not in object_list and item.source not in blocked_sources:
             cultural_news_list.append(item)
 
     for item in oth:
-        if item not in object_list:
+        if item not in object_list and item.source not in blocked_sources:
             other_news_list.append(item)
 
     popular_news = list(set(popular_news_list))
@@ -209,6 +219,26 @@ def sidebar_news(object_list):
     return popular_news, opinion_news, cultural_news, other_news
 
 
+def remove_blocked_sources(object_list, user):
+    blocked_sources = []
+    blocked_all = BlockedSources.objects.filter(user=user)
+    print(blocked_all)
+    for b in blocked_all:
+        blocked_sources.append(b)
+
+    if blocked_sources:
+        print(blocked_sources)
+        ol = object_list.exclude(source__in=blocked_sources)
+        object_list = set(ol)
+        print(object_list)
+    else:
+        ol = object_list
+        object_list = set(ol)
+        print(object_list)
+
+    return object_list
+
+
 def news_by_tag(request, tag_slug=None):
     object_list = News.objects.all()
     tag = None
@@ -217,53 +247,87 @@ def news_by_tag(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         object_list = object_list.filter(tags__in=[tag])
 
-    side_news = sidebar_news(object_list)
+    try:
+        object_list = remove_blocked_sources(object_list, request.user)
+    except:
+        print('Invalid user.')
+
+    side_news = sidebar_news(object_list, request.user)
     popular_news = side_news[0]
     opinion_news = side_news[1]
+    cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/saved-news.html',
-                  {'object_list': object_list, 'tag': tag, 'popular_news': popular_news, 'opinion_news': opinion_news})
+                  {'object_list': object_list, 'tag': tag, 'popular_news': popular_news, 'opinion_news': opinion_news,
+                   'cultural_news': cultural_news})
 
 
 def news_by_source(request, source):
     object_list = News.objects.filter(source__in=[source])
     s = source
+    blocked = ''
+    blocked_sources = []
+    blocked_all = BlockedSources.objects.all()
+    for b in blocked_all:
+        blocked_sources.append(b.source_name)
 
-    side_news = sidebar_news(object_list)
+    if s in blocked_sources:
+        blocked = 'The source is blocked.'
+
+    try:
+        object_list = remove_blocked_sources(object_list, request.user)
+    except:
+        print('Invalid user.')
+
+    side_news = sidebar_news(object_list, request.user)
     popular_news = side_news[0]
     opinion_news = side_news[1]
     cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/source-news.html',
                   {'object_list': object_list, 'source': s, 'cultural_news': cultural_news,
-                   'opinion_news': opinion_news, 'popular_news': popular_news})
+                   'opinion_news': opinion_news, 'popular_news': popular_news, 'blocked': blocked})
 
 
 def news_by_date(request, date):
     date_str = date
     d = parse_date(date_str)
-    ol = News.objects.all().filter(date_time=d)
-    object_list = set(ol)
 
-    side_news = sidebar_news(object_list)
+    ol = News.objects.all().filter(date_time=d)
+
+    try:
+        object_list = remove_blocked_sources(ol, request.user)
+    except:
+        object_list = set(ol)
+        print('Invalid user.')
+
+    side_news = sidebar_news(object_list, request.user)
     popular_news = side_news[0]
     opinion_news = side_news[1]
+    cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/source-news.html',
-                  {'object_list': object_list, 'date': d, 'popular_news': popular_news, 'opinion_news': opinion_news})
+                  {'object_list': object_list, 'date': d, 'popular_news': popular_news, 'opinion_news': opinion_news,
+                   'cultural_news': cultural_news})
 
 
 def news_by_author(request, author):
     ol = News.objects.all().filter(author=author)
-    object_list = set(ol)
 
-    side_news = sidebar_news(object_list)
+    try:
+        object_list = remove_blocked_sources(ol, request.user)
+    except:
+        object_list = set(ol)
+        print('Invalid user.')
+
+    side_news = sidebar_news(object_list, request.user)
     popular_news = side_news[0]
     opinion_news = side_news[1]
+    cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/source-news.html',
                   {'object_list': object_list, 'author': author, 'popular_news': popular_news,
-                   'opinion_news': opinion_news})
+                   'opinion_news': opinion_news, 'cultural_news': cultural_news})
 
 
 class NewsDetail(DetailView):
@@ -321,13 +385,15 @@ def category(request, section):
 
     if section == 'top':
         tag = get_object_or_404(Tag, slug='ap-top-news')
-        ol = object_list.filter(tags__in=[tag])
-        ols = set(ol)
-        object_list = list(ols)
+        object_list = object_list.filter(tags__in=[tag])
     else:
-        ol = object_list.filter(section=st)
-        ols = set(ol)
-        object_list = list(ols)
+        object_list = object_list.filter(section=st)
+
+    try:
+        ols = remove_blocked_sources(object_list, request.user)
+    except:
+        ols = set(object_list)
+    object_list = list(ols)
 
     length = len(object_list)
     if object_list:
@@ -367,12 +433,19 @@ def category(request, section):
     opi = News.objects.filter(section='Opinion')
     oth = News.objects.filter(section='Other')
 
-    pn = not_in(pop, pn, top, row_top, row_bottom, rest)
+    try:
+        pop = remove_blocked_sources(pop, request.user)
+        cul = remove_blocked_sources(cul, request.user)
+        opi = remove_blocked_sources(opi, request.user)
+        oth = remove_blocked_sources(oth, request.user)
+    except:
+        pop = set(pop)
+        print('Invalid user.')
+
+    popular_news = not_in(pop, pn, top, row_top, row_bottom, rest)
     cultural_news = not_in(cul, cultural_news, top, row_top, row_bottom, rest)
     opinion_news = not_in(opi, opinion_news, top, row_top, row_bottom, rest)
     other_news = not_in(oth, other_news, top, row_top, row_bottom, rest)
-
-    popular_news = set(pn)
 
     return render(request, 'AggregatorApp/category.html',
                   {'object_list': object_list, 'st': st, 'section': section, 'top': top,
@@ -452,7 +525,6 @@ def user_feed(request):
 
     if nid_list:
         nid_set = set(nid_list)
-        print(nid_set)
 
         for i in nid_set:
             r = ol.get(news_id=i)
@@ -468,13 +540,15 @@ def user_feed(request):
     else:
         print('No tags selected. -- 2')
 
-    side_news = sidebar_news(object_list)
+    object_list = set(object_list)
+    side_news = sidebar_news(object_list, request.user)
     popular_news = side_news[0]
     opinion_news = side_news[1]
+    cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/user-feed.html',
                   {'object_list': object_list, 'profile': profile, 'popular_news': popular_news,
-                   'opinion_news': opinion_news})
+                   'opinion_news': opinion_news, 'cultural_news': cultural_news})
 
 
 @login_required(login_url='/sign-in/')
@@ -501,12 +575,14 @@ def save_news(request, pk):
 def saved_news_list_view(request):
     object_list = SavedNews.objects.filter(user=request.user)
 
-    side_news = sidebar_news(object_list)
+    side_news = sidebar_news(object_list, request.user)
     popular_news = side_news[0]
     opinion_news = side_news[1]
+    cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/saved-news.html',
-                  {'object_list': object_list, 'popular_news': popular_news, 'opinion_news': opinion_news})
+                  {'object_list': object_list, 'popular_news': popular_news, 'opinion_news': opinion_news,
+                   'cultural_news': cultural_news})
 
 
 class SavedNewsDetail(DetailView):
@@ -518,11 +594,24 @@ class SavedNewsDetail(DetailView):
 
         popular_tag = get_object_or_404(Tag, slug='ap-top-news')
         popular_news = News.objects.filter(tags__in=[popular_tag])
+        cultural_news = News.objects.filter(section='Culture')
+        opinion_news = News.objects.filter(section='Opinion')
+
+        if self.request.user:
+            try:
+                popular_news = remove_blocked_sources(popular_news, self.request.user)
+                cultural_news = remove_blocked_sources(cultural_news, self.request.user)
+                opinion_news = remove_blocked_sources(opinion_news, self.request.user)
+            except:
+                print('Invalid User.')
 
         context['popular_news'] = popular_news
+        context['cultural_news'] = cultural_news
+        context['opinion_news'] = opinion_news
         return context
 
 
+@login_required(login_url='/sign-in/')
 def saved_news_delete(request, pk):
     sd = SavedNews.objects.get(pk=pk)
     sd.delete()
@@ -537,6 +626,7 @@ def news_detail(request, year, month, day, news_id, pk):
     popular_tag = get_object_or_404(Tag, slug='ap-top-news')
     pn = News.objects.filter(tags__in=[popular_tag])
     on = News.objects.filter(section='Opinion')
+    cn = News.objects.filter(section='Culture')
     saved = []
 
     if request.user:
@@ -545,16 +635,23 @@ def news_detail(request, year, month, day, news_id, pk):
 
             for s in sn:
                 saved.append(s.url)
+
+            popular_news = remove_blocked_sources(pn, request.user)
+            opinion_news = remove_blocked_sources(on, request.user)
+            cultural_news = remove_blocked_sources(cn, request.user)
         except:
+            popular_news = set(pn)
+            opinion_news = set(on)
+            cultural_news = set(cn)
             print('Invalid User.')
 
-    popular_news = set(pn)
-    opinion_news = set(on)
 
     if news in popular_news:
         popular_news.discard(news)
     if news in opinion_news:
         opinion_news.discard(news)
+    if news in cultural_news:
+        cultural_news.discard(news)
 
     # List of active comments for this post
     comments = news.comments.filter(active=True)
@@ -577,4 +674,47 @@ def news_detail(request, year, month, day, news_id, pk):
         comment_form = CommentForm()
     return render(request, 'AggregatorApp/news-detail.html',
                   {'news': news, 'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form,
-                   'popular_news': popular_news, 'opinion_news': opinion_news, 'saved': saved})
+                   'popular_news': popular_news, 'opinion_news': opinion_news, 'cultural_news': cultural_news,
+                   'saved': saved})
+
+
+def block_source(request, source):
+    url = ''
+    if source == 'AP News':
+        url = 'https://apnews.com'
+    elif source == 'The Guardian':
+        url = 'https://www.theguardian.com'
+    elif source == 'Reuters':
+        url = 'https://www.reuters.com'
+
+    source_block = BlockedSources(user=request.user, source_name=source, source_url=url)
+    source_block.save()
+
+    return redirect('AggregatorApp:blocked-sources-list')
+
+
+@login_required(login_url='/sign-in/')
+def blocked_sources_list(request):
+    all_sources = News.objects.all()
+    sources = []
+
+    for s in all_sources:
+        sources.append(s.source)
+
+    sources = set(sources)
+
+    blocked_sources = BlockedSources.objects.filter(user=request.user)
+    bs_names = []
+    for b in blocked_sources:
+        bs_names.append(b.source_name)
+
+    return render(request, 'AggregatorApp/blocked-sources.html',
+                  {'sources': sources,'blocked_sources': blocked_sources, 'bs_names': bs_names})
+
+
+@login_required(login_url='/sign-in/')
+def unblock_source(request, pk):
+    blocked_source = BlockedSources.objects.get(user=request.user, pk=pk)
+    blocked_source.delete()
+
+    return redirect('AggregatorApp:blocked-sources-list')

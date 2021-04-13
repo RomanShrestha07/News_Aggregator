@@ -66,7 +66,7 @@
                         <div class="entity_footer">
                             <div class="entity_tag">
                                 <div class="dropdown">
-                                    {% for tag in news.tags.all %}
+                                    {% for tag in savednews.tags.all %}
                                         {% if tag.name != '-' %}
                                             <span class="tag">
                                                 <a href="{% url 'AggregatorApp:news_list_by_tag' tag.slug %}">

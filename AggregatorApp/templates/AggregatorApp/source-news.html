@@ -54,9 +54,12 @@
                                         <!-- category_article_title -->
 
                                         <div class="article_date">
-                                            Source: <a href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
-                                            Date: <a href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
-                                            Author: <a href="{% url 'AggregatorApp:news-by-author' news.author %}"> {{ news.author }}</a>
+                                            Source: <a
+                                                href="{% url 'AggregatorApp:news-by-source' news.source %}"> {{ news.source }}</a>&nbsp
+                                            Date: <a
+                                                href="{% url 'AggregatorApp:news-by-date' news.date_time %}"> {{ news.date_time }}</a>&nbsp
+                                            Author: <a
+                                                href="{% url 'AggregatorApp:news-by-author' news.author %}"> {{ news.author }}</a>
                                         </div>
                                         <!----article_date------>
                                         <!-- category_article_wrapper -->
@@ -74,6 +77,9 @@
                             <!-- category_article_wrapper -->
                         {% endfor %}
                     </div>
+                {% elif blocked %}
+                    <hr>
+                    <h1>{{ blocked }}</h1>
                 {% else %}
                     <hr>
                     <h1>No news.</h1>
