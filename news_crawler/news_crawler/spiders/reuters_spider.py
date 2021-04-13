@@ -15,7 +15,6 @@ class ReutersSpider(XMLFeedSpider, Spider):
 
     def parse_node(self, response, node):
         item = NewsItem()
-        item['headline'] = node.xpath("//*[local-name()='title']/text()").get()
         item['source'] = 'Reuters'
         item['date_time'] = node.xpath("//*[local-name()='publication_date']/text()").get()
 
@@ -33,6 +32,9 @@ class ReutersSpider(XMLFeedSpider, Spider):
         selector4 = '//meta[@name="analyticsAttributes.topicChannel"]/@content'
         selector5 = '//meta[@property="og:image"]/@content'
         selector6 = '//meta[@property="og:description"]/@content'
+        selector7 = '//meta[@name="analyticsAttributes.title"]/@content'
+
+        old_item['headline'] = response.xpath(selector7).get()
 
         author = response.xpath(selector1).get()
 

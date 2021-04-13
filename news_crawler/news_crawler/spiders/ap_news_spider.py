@@ -64,9 +64,10 @@ class ApNewsSpider2(scrapy.Spider):
             author = news.css(selector5).extract_first()
 
             if author.startswith('By') or author.startswith('BY'):
-                item['author'] = news.css(selector5).extract_first()
+                temp = author[3:]
+                item['author'] = temp
             else:
-                item['author'] = 'By AP News'
+                item['author'] = 'AP News'
 
             item['date_time'] = news.css(selector6).get()
 
