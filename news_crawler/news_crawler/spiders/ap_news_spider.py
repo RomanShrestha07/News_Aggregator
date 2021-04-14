@@ -47,7 +47,7 @@ class ApNewsSpider2(scrapy.Spider):
             selector4 = 'h1::text'
             selector5 = 'span::text'
             selector6 = 'span.Timestamp::attr(title)'
-            selector7 = 'p::text'
+            selector7 = 'p ::text'  # mind the space after p else the text from a tags within the p tags wont work
             selector8 = '//meta[@name="keywords"]/@content'
             selector9 = '//meta[@property="article:section"]/@content'
             selector10 = '//meta[@property="og:image"]/@content'

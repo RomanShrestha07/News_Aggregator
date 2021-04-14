@@ -27,7 +27,7 @@ class ReutersSpider(XMLFeedSpider, Spider):
         old_item = response.request.meta['item']
 
         selector1 = '//meta[@name="author"]/@content'
-        selector2 = '//div[@class="ArticleBodyWrapper"]/p/text()'
+        selector2 = '//div[@class="ArticleBodyWrapper"]/p /text()'
         selector3 = '//meta[@name="keywords"]/@content'
         selector4 = '//meta[@name="analyticsAttributes.topicChannel"]/@content'
         selector5 = '//meta[@property="og:image"]/@content'

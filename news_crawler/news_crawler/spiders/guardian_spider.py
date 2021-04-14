@@ -38,7 +38,7 @@ class GuardianSpider(XMLFeedSpider, Spider):
         old_item = response.request.meta['item']
 
         selector1 = '//a[@rel="author"]/text()'
-        selector2 = 'p::text'
+        selector2 = 'p ::text'
         selector3 = '//meta[@property="article:section"]/@content'
         selector4 = '//meta[@property="og:image"]/@content'
         selector5 = '//meta[@property="og:description"]/@content'
