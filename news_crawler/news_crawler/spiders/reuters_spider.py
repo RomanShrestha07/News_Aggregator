@@ -33,8 +33,15 @@ class ReutersSpider(XMLFeedSpider, Spider):
         selector5 = '//meta[@property="og:image"]/@content'
         selector6 = '//meta[@property="og:description"]/@content'
         selector7 = '//meta[@name="analyticsAttributes.title"]/@content'
+        selector8 = '//meta[@property="og:title"]/@content'
 
-        old_item['headline'] = response.xpath(selector7).get()
+        headline1 = response.xpath(selector7).get()
+        headline2 = response.xpath(selector8).get()
+
+        if headline1 == "" or headline1:
+            old_item['headline'] = headline1
+        else:
+            old_item['headline'] = headline2
 
         author = response.xpath(selector1).get()
 

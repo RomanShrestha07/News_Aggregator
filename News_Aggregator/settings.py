@@ -84,7 +84,7 @@ DATABASES = {
     # },
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'my_news',
+        'NAME': 'news_db',
         'HOST': 'localhost',
         'PORT': 27017,
     },

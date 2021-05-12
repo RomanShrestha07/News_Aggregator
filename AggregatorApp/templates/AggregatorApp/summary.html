@@ -1,0 +1,48 @@
+{% extends 'AggregatorApp/base.html' %}
+{% load static %}
+
+{% block title %}Summary{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="entity_wrapper">
+
+                    <div class="entity_title header_purple">
+                        <h1>Summary</h1>
+                    </div>
+                    <!-- entity_title -->
+
+                </div>
+
+
+                <div class="category_section camera">
+                    <!-- article_title -->
+                    {% for news in popular_news %}
+                        <div class="category_article_wrapper">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="category_article_content">
+                                        {{ summary }}
+                                    </div>
+                                    <!-- category_article_content -->
+                                </div>
+                                <!-- col-md-7 -->
+                            </div>
+                            <!-- row -->
+                            <hr>
+                        </div>
+                        <!-- category_article_wrapper -->
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- col-md-8 -->
+
+            {% include 'AggregatorApp/parts/side-bar-category.html' %}
+            <!-- col-md-4 -->
+        </div>
+        <!-- row -->
+    </div>
+    <!-- container -->
+{% endblock %}

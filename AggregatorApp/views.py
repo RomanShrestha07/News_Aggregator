@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+import requests, json
 # from .forms import UserRegistrationForm
 from .models import RawNews, Profile, News, BlockedSources, SavedNews, Comment
 from django.contrib.auth.models import User
@@ -17,7 +18,30 @@ from django.utils.dateparse import parse_date
 
 
 def index(request):
-    return render(request, 'AggregatorApp/base.html')
+    object_list = News.objects.all()
+    section = 'index'
+
+    popular_tag = get_object_or_404(Tag, slug='ap-top-news')
+    pop = News.objects.filter(tags__in=[popular_tag])
+    cul = News.objects.filter(section='Culture')
+    opi = News.objects.filter(section='Opinion')
+    oth = News.objects.filter(section='Other')
+
+    try:
+        popular_news = remove_blocked_sources(pop, request.user)
+        cultural_news = remove_blocked_sources(cul, request.user)
+        opinion_news = remove_blocked_sources(opi, request.user)
+        other_news = remove_blocked_sources(oth, request.user)
+    except:
+        popular_news = set(pop)
+        cultural_news = set(cul)
+        opinion_news = set(opi)
+        other_news = set(oth)
+        print('Invalid user.')
+
+    return render(request, 'AggregatorApp/index.html',
+                  {'section': section, 'popular_news': popular_news, 'cultural_news': cultural_news,
+                   'opinion_news': opinion_news, 'other_news': other_news})
 
 
 def signup(request):
@@ -71,7 +95,6 @@ def update_profile(request):
 @staff_member_required()
 def news_processing(request):
     news = RawNews.objects.all()
-    processed_news = News.objects.all()
     c = 0
 
     for n in news:
@@ -84,9 +107,6 @@ def news_processing(request):
         else:
             s = 'none'
         news_id = ''
-
-        print(c)
-        print(n.headline)
 
         if source == 'AP News':
             news_id = "AP-News-" + str(c)
@@ -149,24 +169,24 @@ def news_processing(request):
                     section = 'Entertainment'
 
         date = date_time[0:10]
+        print(news_id)
+        print(n.headline)
 
-        news2 = News(source=source, news_id=news_id,
-                     headline=n.headline, author=n.author,
-                     date_time=date, url=n.url, content=n.content,
-                     section=section, image=n.image, description=n.description)
-
-        news2.save()
-
-        if n.headline in processed_news.headline:
-            print(news.headline)
-
-        for t in n.tags:
-            try:
-                news2.tags.add(t.lower())
-            except:
-                news2.tags.add('-')
+        if n.content and n.headline:
+            news2 = News(source=source, news_id=news_id,
+                         headline=n.headline, author=n.author,
+                         date_time=date, url=n.url, content=n.content,
+                         section=section, image=n.image, description=n.description)
 
             news2.save()
+
+            for t in n.tags:
+                try:
+                    news2.tags.add(t.lower())
+                except:
+                    news2.tags.add('-')
+
+                news2.save()
 
     print("Successful")
 
@@ -307,13 +327,13 @@ def news_by_date(request, date):
     cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/source-news.html',
-                  {'object_list': object_list, 'date': d, 'popular_news': popular_news, 'opinion_news': opinion_news,
-                   'cultural_news': cultural_news})
+                  {'object_list': object_list, 'date': d, 'popular_news': popular_news,
+                   'opinion_news': opinion_news, 'cultural_news': cultural_news})
 
 
 def news_by_author(request, author):
     ol = News.objects.all().filter(author=author)
-
+    a = author
     try:
         object_list = remove_blocked_sources(ol, request.user)
     except:
@@ -326,7 +346,7 @@ def news_by_author(request, author):
     cultural_news = side_news[2]
 
     return render(request, 'AggregatorApp/source-news.html',
-                  {'object_list': object_list, 'author': author, 'popular_news': popular_news,
+                  {'object_list': object_list, 'author': a, 'popular_news': popular_news,
                    'opinion_news': opinion_news, 'cultural_news': cultural_news})
 
 
@@ -618,10 +638,29 @@ def saved_news_delete(request, pk):
     return redirect('AggregatorApp:saved-news')
 
 
+def summarize(request, content):
+    text = content
+    r = requests.post(
+        "https://api.deepai.org/api/summarization",
+        data={
+            'text': content,
+        },
+        headers={'api-key': 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K'}
+    )
+
+    s = json.loads(r.json())
+    summary = s['summary']
+    return render(request, 'AggregatorApp/summary.html', {'summary': summary})
+
+
 def news_detail(request, year, month, day, news_id, pk):
     date_str = str(year) + '-' + str(month) + '-' + str(day)
     d = parse_date(date_str)
     news = get_object_or_404(News, pk=pk, news_id=news_id, date_time=d)
+
+    # related_news = news.tags.similar_objects()
+    # print('--------------')
+    # print(related_news)
 
     popular_tag = get_object_or_404(Tag, slug='ap-top-news')
     pn = News.objects.filter(tags__in=[popular_tag])
@@ -644,7 +683,6 @@ def news_detail(request, year, month, day, news_id, pk):
             opinion_news = set(on)
             cultural_news = set(cn)
             print('Invalid User.')
-
 
     if news in popular_news:
         popular_news.discard(news)
